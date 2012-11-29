@@ -1,0 +1,4 @@
+<?php
+//PeoBack_init
+
+?>
