@@ -20,23 +20,23 @@
 		$DBPath = realpath($xPath);
 		break;
 	case "ado_mssql";
-		//$myhost		= "192.168.200.124";
-		$myhost		= "172.16.44.208";
-		$myuser		= "sa";
-		$mypassword	= "seat";
+		//$myhost		= "XXXXXXXXXXXXXXXX";
+		$myhost		= "XXXXXXXXXXXXXXXX";
+		$myuser		= "xx";
+		$mypassword	= "xxx";
 		$mydatabase	= "UnivSelect";
 		break;
 	case "mssql";
 		$myhost		= "localhost";
 		$myuser		= "sa";
-		$mypassword	= "qazwsxedc";
-		$mydatabase	= "nkc_epaper";
+		$mypassword	= "xxxx";
+		$mydatabase	= "nkc_xxxx";
 		break;
 	case "mysql";
-		$myhost		= "192.168.200.124";
-		$myuser		= "vocational_sch";
-		$mypassword	= "qazsew";
-		$mydatabase	= "vocational_sch";
+		$myhost		= "192.xxxxx";
+		$myuser		= "xx_sch";
+		$mypassword	= "xx";
+		$mydatabase	= "xxx_sch";
 		break;
 	}
 
