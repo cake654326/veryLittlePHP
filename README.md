@@ -8,6 +8,7 @@ you can use simple MVC design pattern.
  * @package     veryLittlePHP
  * @author      Cake X
  * @link        https://github.com/cake654326/veryLittlePHP
+ * @mail        c782172004@gmail.com
  * @version     1.1
  * 
  * This program is free software: you can redistribute it and/or modify
