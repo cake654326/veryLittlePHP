@@ -7,6 +7,11 @@ class template
 		$this->clear();
 	} 
 	
+	public function loadView($_path,$_arr,$_b = false){
+		$this->view($_path,$_arr,$_b);
+		$this->clear();
+	}
+
 	public function view($_path,$_arr,$_b = false)
 	{
 		$TPL = $_arr;
@@ -19,7 +24,7 @@ class template
 			return $this->_data;
 		}
 		//echo $this->_data;
-		return;
+		return ;
 	}
 	
 	public function clear(){
