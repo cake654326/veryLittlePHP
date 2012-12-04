@@ -1,19 +1,19 @@
 <?php
 class cx_lib {
-	var $mConn;
+	var $mCore;
 
-	public function __construct( $_conn = null ) {
+	public function __construct( $_Core = null ) {
 		//parent::__construct();
-		if($_conn == null){
+		if($_Core == null){
 			global $Core;
 			if($Core){
-				$_conn = &$Core->getDB();
+				$_Core = &$Core->getDB();
 			}else{
 				echo "ERROR:[cx_lib] don't have Core OR __construct( $_conn ) val adodb loading";
 				exit(0);
 			}
 		}
-		$this->mConn = &$_conn;
+		$this->mCore = &$_Core;
 	}
 }
 ?>
