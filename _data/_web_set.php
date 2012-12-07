@@ -1,7 +1,7 @@
 <?
 //-------------------------------------------------------------
 //環境參數
-	$title_big5	= "線上批改";
+//	$title_big5	= "線上批改";
 //	$URL_http	= "";
 //	$smtp_svr	= "mail.xxx.com.tw";		//寄送郵件伺服器
 	
@@ -21,10 +21,10 @@
 		break;
 	case "ado_mssql";
 		//$myhost		= "XXXXXXXXXXXXXXXX";
-		$myhost		= "XXXXXXXXXXXXXXXX";
-		$myuser		= "xx";
-		$mypassword	= "xxx";
-		$mydatabase	= "UnivSelect";
+		$myhost		= "127.16.3.48";
+		$myuser		= "sa";
+		$mypassword	= "seat";
+		$mydatabase	= "framework_db";
 		break;
 	case "mssql";
 		$myhost		= "localhost";
