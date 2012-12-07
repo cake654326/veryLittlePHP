@@ -1,5 +1,7 @@
 <?php
 /**
+ * 用於MVC入口點 初始類別
+ * 
  * 2012 12 07  - v1.2
  *			+ 傳統 MVC 入口點 index.php 
  *			+ 相容之前非使用 入口點 專案(v1.1) 以及 傳統寫法專案(v1.1)，不相容 舊版 v1.0框架專案
@@ -27,6 +29,7 @@ class CX {
 		//print_cx($_router->aData);
 		$mCTRL = self::_getController( $_path , $_router->getControllerName()  );
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
+		$mCTRL->init();//load init()
 		//echo "<br> action:" . $sAction;
 		return $mCTRL->{$sAction}($_router->aData);
 		//echo "<br> controller:" . $_router->getControllerName();
@@ -61,17 +64,13 @@ class CX {
 		}
     }
 
-    public static function page404( $msg ){
-    	echo "404" . $msg;
+    protected static function page404( $msg ){
+    	$mCore = &self::getCore();
+    	//echo "<br> now getcwd: " . getcwd() . "<br>";  
+    	echo $mCore->loadView('./_view/404.php' , array('msg' => $msg) ,true);
     	return ;
     }
 
-     /**
-     * 
-     *
-     * @return 
-     * @throws Excetion
-     */
     protected function _getAction($_crtl,$_action)
     {
         $action = ucfirst($_action . 'Action');

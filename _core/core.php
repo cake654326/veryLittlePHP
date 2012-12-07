@@ -3,7 +3,7 @@
  * 2012-11/22
  *			+ loadMod = 自動載入 MOD
  * 			+ loadLib = 自動載入 LIB
- * 2012-12  
+ * 2012-12
  * 			+ loadView = 載入樣板 （會自動清空）
  * **/
 class core {
@@ -35,9 +35,10 @@ class core {
 		$this->mTpl = new template();
 	}
 
-	public function loadView($_path,$_arr,$_b = false){
-		$this->mTpl->view($_path,$_arr,$_b);
+	public function loadView( $_path, $_arr, $_b = false ) {
+		$val = $this->mTpl->view( $_path, $_arr, $_b );
 		$this->mTpl->clear();
+		return $val;
 	}
 
 	public function loadMod( $_name ) {
@@ -45,9 +46,9 @@ class core {
 		if ( !in_array( $_name, $this->mMod )  ) {
 
 			$_path = $this->config( 'file_path' ).
-			 		$this->config( 'mod_name' ) .
-			  		'/'.$_name.'.php';
-			array_push($this->mMod, $_name);
+				$this->config( 'mod_name' ) .
+				'/'.$_name.'.php';
+			array_push( $this->mMod, $_name );
 			require $_path;
 			return true;
 		}
@@ -57,21 +58,21 @@ class core {
 	public function loadLib( $_name ) {
 		if ( !in_array( $_name, $this->mLib ) ) {
 			$_path = $this->config( 'file_path' ).
-			 		$this->config( 'lib_name' ) .
-			  		'/'.$_name.'.php';
-			array_push($this->mLib, $_name);
+				$this->config( 'lib_name' ) .
+				'/'.$_name.'.php';
+			array_push( $this->mLib, $_name );
 			require $_path;
 			return true;
 		}
 		return false;
 	}
 
-	public function loadSysLib( $_name ){
+	public function loadSysLib( $_name ) {
 		if ( !in_array( $_name, $this->mSysLib ) ) {
 			$_path = $this->config( 'sysFile_path' ).
-			 		$this->config( 'sysLib_name' ) .
-			  		'/'.$_name.'.php';
-			array_push($this->mSysLib, $_name);
+				$this->config( 'sysLib_name' ) .
+				'/'.$_name.'.php';
+			array_push( $this->mSysLib, $_name );
 			require $_path;
 			return true;
 		}
@@ -160,14 +161,13 @@ class core {
 		return $this->mGet;
 	}
 
-	function is_debug(){
-		if (defined('CXDEBUG') )
-		{
-			if(CXDEBUG == true){
+	function is_debug() {
+		if ( defined( 'CXDEBUG' ) ) {
+			if ( CXDEBUG == true ) {
 				//ChromePhp::log("ADODB SQL 總花費時間", $this->_cx_all_time);
 				return true;
 			}
-			
+
 		}
 		return false;
 	}
