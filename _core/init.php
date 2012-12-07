@@ -62,6 +62,7 @@ function alertMsg( $_msg, $_js ) {
 	$mTpl->clear();
 	return $_val;
 }
+
 require 'CX.php';//MVC
 
 

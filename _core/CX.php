@@ -19,25 +19,25 @@ class CX {
 	}
 
 	public static function run(){
-		global $MVC_PATH;
+		global $MVC_PATH; 
 		$mCore = &self::getCore();
 		$mCore->loadSysLib("cx_router");
 		$_router = new cx_router();
 		$_path = $_router->init( $MVC_PATH . "_controllers" )->getPath();
-		//echo "path:" . $_path;
-		//echo "<br> controller:" . $_router->getControllerName();
-		//print_cx($_router->aData);
+		$_url = $_router->aUrl;
+		//print_cx($_url);
+		if( $_url[0] == '' || !isset($_url[0])){//!isset($_url[0]) || 
+			$_base_ctrl = $mCore->config("baseController");
+			header("Location: "  ."./index.php" .$_base_ctrl );
+			exit;
+		}
 		$mCTRL = self::_getController( $_path , $_router->getControllerName()  );
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
 		$mCTRL->init();//load init()
-		//echo "<br> action:" . $sAction;
 		return $mCTRL->{$sAction}($_router->aData);
-		//echo "<br> controller:" . $_router->getControllerName();
-
-		//$_par = $_router->_parseUrl();
-		//print_cx($_par);
 
 	}
+
 
 	protected static function _getController($_path,$_controller )
     {
