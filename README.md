@@ -20,10 +20,11 @@
  * GNU General Public License for more details.
  *
  * ------------------------------------------------------------------------
- * Summary:
- * This is a support 「ADODB」 small framework, 
- * to provide simplify the ADODB tools as well as a simple template, 
- * you can use simple MVC design pattern.
+ * Summary:(google Translation)
+ * This is a small framework to support the "ADODB",
+ * The ADODB tools provide simplified, and a simple template,
+ * As well as to solve the traditional wording contains MVC,
+ * You can use a simple MVC design pattern,
  * 
  * ------------------------------------------------------------------------
  * 2012 10	
