@@ -28,6 +28,11 @@ class demoController extends baseController
    }
 
    public function AddAction( $aUrl ){
+
+         ( 1 == 1)  and $bb = "1!=1";
+         !( 1 == 2 ) and $bb = "1!=2";
+         echo $bb;
+
    		echo "<br> demo aUrl:";
    		print_cx($aUrl);
          echo "<br> demo this->mCore->Post:";

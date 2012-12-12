@@ -105,16 +105,10 @@ $(function() {
 			<div class="footer span-24">
 			<hr>
 				<p class="font">
-					地址：404 台中市北區大雅路337號7樓之2　TEL : (04)2298-5966 　FAX: (04)2298-5977 　<br>
-					版權所有 © 2012 　松盟科技股份有限公司‧ All Rights Reserved.<br>
-					建議使用 
-					<!-- <a href="http://www.google.com/chrome/">Google瀏覽器（Chrome）</a>、
-					<a href="http://moztw.org/firefox/">Firefox瀏覽器（Firefox）</a>、
-					<a href="http://www.opera.com/products/">Opera 瀏覽器（Opera）</a>、 -->
 					Google瀏覽器（Chrome）、
 					Firefox瀏覽器（Firefox）、
 					Opera 瀏覽器（Opera）、
-					IE8瀏覽器（Internet Explorer 8），
+					IE10瀏覽器（Internet Explorer 10），
 					以達到最佳的顯示效果
 				</p>
 			</div>

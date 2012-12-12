@@ -11,9 +11,9 @@
 **/
 session_start();
 $_path = "../";
-if( isset( $MVC_PATH ) ){
-	$_path = $MVC_PATH;
-}
+
+//check MVC and set PATH
+isset( $MVC_PATH ) and $_path = $MVC_PATH;
 
 require 'help.php';
 require 'template.php';
@@ -74,7 +74,8 @@ function alertMsg( $_msg, $_js ) {
 	return $_val;
 }
 
-require 'CX.php';//MVC
+//CX.php 為MVC模式物件 
+require 'CX.php';
 
 
 ?>
