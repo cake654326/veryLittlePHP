@@ -21,10 +21,13 @@
 		break;
 	case "ado_mssql";
 		//$myhost		= "XXXXXXXXXXXXXXXX";
-		$myhost		= "127.16.3.48";
-		$myuser		= "sa";
-		$mypassword	= "seat";
-		$mydatabase	= "framework_db";
+		// $myhost		= "127.16.3.48";
+		// $myuser		= "sa";
+		// $mypassword	= "seat";
+		// $mydatabase	= "framework_db";
+
+
+
 		break;
 	case "mssql";
 		$myhost		= "localhost";

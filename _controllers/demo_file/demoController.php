@@ -1,6 +1,13 @@
 <?php
-//abstract class CX_Controller extends CI_Controller
-class demoController extends baseContoller
+/**
+# demoController - 控制器 測試頁面
+# CAKE X
+# 繼承 baseController ,未來將建立 自定 Contoller 功能
+# --------------------------------------------------------
+# 2012/12/22 AM08:50 v1.2 : [cx] demo/demoController.php
+# --------------------------------------------------------
+**/
+class demoController extends baseController
 {
    //public $person = array();
 
@@ -21,9 +28,11 @@ class demoController extends baseContoller
    }
 
    public function AddAction( $aUrl ){
-   		echo "<br> demo add";
+   		echo "<br> demo aUrl:";
    		print_cx($aUrl);
+         echo "<br> demo this->mCore->Post:";
    		print_cx($this->mCore->Post());
+         echo "<br> demo this->mCore->Get:";
    		print_cx($this->mCore->Get());
    		echo "<br> now getcwd: " . getcwd() . "<br>";
    		$this->mCore->loadLib("lib_demo");

@@ -1,13 +1,24 @@
 <?php
+/**
+# init.php 
+# CAKE X
+# 預設載入功能
+# --------------------------------------------------------
+# 2012/11            v1.1.0 : [cx]相容 傳統寫法專案(v1.1)，不相容 舊版 v1.0框架專案
+# 2012/12/07         v1.2.0 : [cx]增加 MVC 控制器模式
+# 2012/12/22 AM09:15 v1.2.0 : [cx]修正 baseController
+# --------------------------------------------------------
+**/
 session_start();
 $_path = "../";
 if( isset( $MVC_PATH ) ){
 	$_path = $MVC_PATH;
 }
+
 require 'help.php';
 require 'template.php';
 require 'core.php';
-require 'baseContoller.php';
+require 'baseController.php';
 $Core = new core();
 $Core->mConfig['file_path'] = $_path;
 require $_path.'_base/config.php';
