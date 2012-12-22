@@ -6,6 +6,7 @@
 # --------------------------------------------------------
 # 2012/12/07 AM  :   v1.2.0 : [cx] 傳統 MVC 入口點 index.php 
 #							  [cx] 相容之前非使用 入口點 專案(v1.1) 以及 傳統寫法專案(v1.1)，不相容 舊版 v1.0框架專案
+# 2012/12/22 PM17:59 v1.2.1 : [cx] 增加取得 baseUrl 網址
 # --------------------------------------------------------
 **/
 class CX {
@@ -23,10 +24,16 @@ class CX {
 		global $MVC_PATH; 
 		$mCore = &self::getCore();
 		$mCore->loadSysLib("cx_router");
+
+		$_host = ( !$mCore->config("base_host" ) )?null:$mCore->config("base_host" );
+
 		$_router = new cx_router();
-		$_path = $_router->init( $MVC_PATH . "_controllers" )->getPath();
+		$_path = $_router->init( $MVC_PATH . "_controllers" ,$_host)->getPath();
 		$_url = $_router->aUrl;
 		//print_cx($_url);
+
+		$mCore->mBaseUrl = ( !$mCore->config("base_base_url" ) )?$_router->getBaseUrl():$mCore->config("base_base_url" );
+
 		if( $_url[0] == '' || !isset($_url[0])){//!isset($_url[0]) || 
 			$_base_ctrl = $mCore->config("baseController");
 			header("Location: "  ."./index.php" .$_base_ctrl );

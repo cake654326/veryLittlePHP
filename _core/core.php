@@ -7,6 +7,7 @@
 # 2012/11/22 AM  :   v1.1.0 : [cx] loadMod  自動載入 MOD
 #								   loadLib  自動載入 LIB
 # 2012/12/   AM  :   v1.2.0 : [cx] loadView  載入樣板 （會自動清空）
+# 2012/12/22 PM17:59 v1.2.1 : [cx] 增加 baseUrl 
 # --------------------------------------------------------
 **/
 class core {
@@ -18,6 +19,7 @@ class core {
 	var $mLib = array();
 	var $mSysLib = array();
 	var $mTpl = null;
+	var $mBaseUrl = null;
 
 	var $mLayout = array(); //[實驗] !* 未定 載入LAYOUT樣板
 
@@ -33,9 +35,14 @@ class core {
 		$this->mConfig['sysModules_name'] = "_modules";
 		$this->mConfig['gc_maxlifetime'] = 0;
 		$this->mConfig['CXDEBUG'] = true;
+
 		$this->mGet = $this->_addslashes_arr( $_GET );
 		$this->mPost = $this->_addslashes_arr( $_POST );
 		$this->mTpl = new template();
+	}
+
+	public function getBaseUrl(){
+		return $this->mBaseUrl;
 	}
 
 	public function loadView( $_path, $_arr, $_b = false ) {

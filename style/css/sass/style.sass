@@ -1,0 +1,205 @@
+@import compass/reset
+@import compass/css3
+@import "blueprint/reset"
+@import "partials/base"
+@import "blueprint"
+@include blueprint
+@import fancy-buttons
+@import "actions/*.png"
+@include all-actions-sprites
+
+@mixin well($color) 
+	font-size: 13px
+	background-color: $color
+	min-height: 20px
+	padding: 0px 19px 19px 19px
+	margin-bottom: 20px
+	border: 1px solid #e3e3e3
+	border-radius: 4px
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05)
+
+@mixin old_wall() 
+	background: 
+		image: url("../images/old_wall.png")
+		position: 0
+		repeat: 'no-repeat'
+	min-height: 20px
+	padding: 0px 19px 19px 19px
+	margin-bottom: 20px
+	border: 1px solid #e3e3e3
+	border-radius: 4px
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05)
+
+.old_wall
+	@include old_wall()
+
+body
+	background: 
+		image: url("../images/back1.jpg")
+		position: 0
+		repeat: 'no-repeat'
+
+.mContainer
+	background:
+		image: url("../images/body1.jpg")
+	@include well(#f5f5f5)
+
+.flat_well
+	background: 
+		image: url("../images/flat.png")
+	@include well(#f5f5f5)
+
+.white_well
+	background: 
+		image: url("../images/white_wall.png")
+	@include well(#f5f5f5)
+
+.az_well
+	background:
+		image: url("../images/az_subtle.png")
+	@include well(#f5f5f5)
+	
+
+.well
+	@include well(#F5F5F5)
+
+.input_table
+	th
+		padding: 10px 0px 17px 13px
+
+.right
+	float: right
+
+.center
+	float: center
+
+.left
+	float: left
+
+.green-btns
+	+fancy-button(#007500, 15px, 10px, 1px)
+
+.blue-btns
+	+fancy-button(#99B9CE,15px,5px,1px)
+
+$green: darken(#57b42c, 8)
+$blue: adjust_hue($green, 110)
+$red: adjust_hue($green, -100)
+
+.blue-btn
+	+fancy-button-colors($blue)
+.green-btn
+	+fancy-button-colors($green)
+.red-btn
+	+fancy-button-colors($red)
+.custom
+	+fancy-button-size(30px, .3em)
+	+fancy-button-padding(2px, 12px, 2px)
+
+.width-30p
+	width: 30%
+
+.brick_background
+	background: 
+		image: url("../images/brick.png")
+		position: 0
+		repeat: 'no-repeat'
+.cloth_background
+	background: 
+		image: url("../images/cloth.png")
+		position: 0
+		repeat: 'no-repeat'
+.felt_background
+	background: 
+		image: url("../images/felt.png")
+		position: 0
+		repeat: 'no-repeat'
+.old_wall_background
+	background: 
+		image: url("../images/old_wall.png")
+		position: 0
+		repeat: 'no-repeat'
+.menu_background
+	+border-top-radius(20px)
+	background: 
+		color: #c1c1c1
+		image: url("../images/mainbk.png")
+		repeat: 'no-repeat'
+	height: 40px
+
+.top_menu 
+	margin: 0px 25px 0px 0px
+
+.boxShadow
+	z-index: -10
+	@include single-box-shadow
+
+.box-shadow-custom-multiple 
+	@include box-shadow(rgba(black, 0.4) 0 0 25px, rgba(green, 0.2) 0 0 3px 1px inset)
+
+.box-shadow-down
+	@include box-shadow(rgba(black, 0.1) 0 0 3px, rgba(green, 0.3) 0 0 3px 1px inset)
+
+
+.fieldset_dev
+	padding: 0px 1px 33px 0px
+	margin: -1px 0px 0px 0px
+	.fieldset_title
+		position: absolute
+		color: #595A5C
+		font-size: 13px
+		font-weight: bold
+		border: solid 1px
+		border-color: rgba(204, 204, 204, 0.96)
+		margin: 0px 0px 0px -20px
+		padding: 6px 8px 4px 9px
+		background: #E9E9E9
+		@include border-corner-radius(top, left, 3px)
+		@include border-corner-radius(top, right, 1px)
+		@include border-corner-radius(bottom, left, 1px)
+		@include border-corner-radius(bottom, right, 8px)
+
+.fieldset
+	padding: 31px 0px 0px 0px
+	.fieldset_title
+		color: #595A5C
+		border: solid 1px
+		border-color: rgba(204, 204, 204, 0.96)
+		margin: 0px 0px 0px -20px
+		padding: 6px 8px 4px 9px
+		background: #E9E9E9
+		@include border-corner-radius(top, left, 3px)
+		@include border-corner-radius(top, right, 1px)
+		@include border-corner-radius(bottom, left, 1px)
+		@include border-corner-radius(bottom, right, 8px)
+
+$types: 10
+$type-PX: 10px
+@while $types > 0
+	.down-#{$type-PX * $types}
+		padding: $type-PX * $types 0px 0px 0px
+	$types: $types - 1
+
+$types: 50
+$type-PX: 5px
+@while $types > 0
+	.width-#{$type-PX * $types}
+		width: $type-PX * $types
+	.height-#{$type-PX * $types}
+		height: $type-PX * $types
+	$types: $types - 1
+
+$types: 20
+$type-PX: 5
+@while $types > 0
+	.width-#{$type-PX * $types}
+		width: #{$type-PX * $types}
+	//.height-#{$type-PX * $types}
+	//	height: #{$type-PX * $types}%
+	$types: $types - 1
+
+.star_mark
+	padding: 0px 0px 0px 0px
+	font-size: 15px
+	font-weight: bold
+	color: #BE0200
