@@ -41,8 +41,17 @@ class core {
 		$this->mTpl = new template();
 	}
 
+	public function setBaseUrl( $_url ){
+		$this->mBaseUrl = $_url;
+		return $this;
+	}
+
 	public function getBaseUrl(){
 		return $this->mBaseUrl;
+	}
+
+	public function getUrl(){
+		return $this->config( 'base_http_title' ) . $this->getBaseUrl();
 	}
 
 	public function loadView( $_path, $_arr, $_b = false ) {

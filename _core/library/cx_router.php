@@ -18,7 +18,7 @@ class cx_router {
 	var $aData = array();
 	var $sBaseUrl = '';
 	var $sHostUrl = '';
-
+	var $aREQUEST_URI = array();
 
 
 	public function __construct() {
@@ -45,9 +45,8 @@ class cx_router {
 
 
 	public function UrlCTRL(){
-
-
 		//---- get base url [cx] 未最佳化
+		//aREQUEST_URI
 		$_index = 0;
 		foreach($this->aUrl as $key => $val){
 			$_index++;
@@ -55,11 +54,13 @@ class cx_router {
 				break;
 			}
 		}
+		// print_cx($this->aUrl);
+		// echo $_index . "<br>";
 		$_data = array_slice($this->aUrl , 0 , $_index-1) ;
 		$_str = implode( '/', $_data ) ;
 		$this->sBaseUrl = $this->sHostUrl . '/' . $_str . '/';
-		// echo $this->sBaseUrl;
-		//print_cx($_data);
+		 // echo $this->sBaseUrl;
+		 // print_cx($_data);
 		// var $sBaseUrl = '';
 
 
@@ -124,17 +125,26 @@ class cx_router {
 		if ( false !== strpos( $currDir, '?' ) ) {//get not GET uRL
 			$currDir = str_replace( substr( $currDir, strpos( $currDir, '?' ) ), '', $currDir );
 		}
-		// $pattern = '/^\/' . preg_quote( $baseDir, '/' ) . '\/*(.*)$/';
+		// $pattern2 = '/^\/' . preg_quote( $baseDir, '/' ) . '\/*(.*)$/';
 		$pattern = '/\/' . preg_quote( $baseDir, '/' ) . '\/*(.*)$/';
-
-		preg_match( $pattern, $currDir, $matches );
 
 		if ( empty( $matches ) ) {
 			$matches = array( '', ltrim( $currDir, '/' ) );
 		}
 
+		//$___Url = array( '', ltrim( $currDir, '/' ) );
+		$_aREQUEST_URI = explode('/', $_SERVER['REQUEST_URI']);
+		foreach($_aREQUEST_URI as $val){
+			if($val != ''  and !is_null($val) ){
+				array_push($this->aREQUEST_URI,$val);
+			}
+		}
+		// unset($arr[$ii]);
+
+		
+
 		$tickets = isset( $matches[1] ) ? explode( '/', $matches[1] ) : array ( '', '' );
-		// print_cx($tickets)
+		 // print_cx($tickets);
 
 		//tickets: Array ( [0] => con1 [1] => val1 [2] => val2 [3] => val3 )
 		//echo "contrl:" . $_controller . " ,action:" . $_action;

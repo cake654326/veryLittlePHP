@@ -34,7 +34,7 @@ class CX {
 		// print_cx($_url);
 
 		$mCore->mBaseUrl = ( !$mCore->config("base_base_url" ) )?$_router->getBaseUrl():$mCore->config("base_base_url" );
-
+		// echo $mCore->mBaseUrl;
 		if( $_url[0] == '' || !isset($_url[0])){//!isset($_url[0]) || 
 			$_base_ctrl = $mCore->config("baseController");
 			header("Location: "  ."./index.php" .$_base_ctrl );
@@ -50,12 +50,14 @@ class CX {
 
 	protected static function _getController($_path,$_controller )
     {
+
     	$mCore = &self::getCore();
          $userNamespace = '';//My_
         // if (array_key_exists('userNamespace', $this->_config['bootstrap'])) {
         //     $userNamespace = rtrim(ucfirst($this->_config['bootstrap']['userNamespace']), '_') . '_';
         // }
 		$controllerName = $userNamespace . $_controller . 'Controller';
+
 		try {
 			if(file_exists($_path)){
 				require $_path;
@@ -67,6 +69,7 @@ class CX {
 			
 			return new $controllerName( $mCore );
 		} catch (Exception $e) {
+
 			self::page404("controllerName 不存在。");
 			exit(0);
 			throw new Exception("Controller \"$controllerName\" 不存在。");
@@ -82,6 +85,7 @@ class CX {
 
     protected function _getAction($_crtl,$_action)
     {
+    	($_action == '') and $_action = 'index';
         $action = ucfirst($_action . 'Action');
         if (method_exists($_crtl, $action)) {
             return $action;

@@ -11,7 +11,7 @@
   <link href="../style/css/stylesheets/cake.css" rel="stylesheet" type="text/css" /> -->
 
 	<!-- bootstrap framework -->
-	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?php echo $Core->getUrl(); ?>/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
 
 
