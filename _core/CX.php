@@ -30,7 +30,8 @@ class CX {
 		$_router = new cx_router();
 		$_path = $_router->init( $MVC_PATH . "_controllers" ,$_host)->getPath();
 		$_url = $_router->aUrl;
-		//print_cx($_url);
+
+		// print_cx($_url);
 
 		$mCore->mBaseUrl = ( !$mCore->config("base_base_url" ) )?$_router->getBaseUrl():$mCore->config("base_base_url" );
 

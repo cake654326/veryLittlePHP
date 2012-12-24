@@ -6,6 +6,7 @@
 # --------------------------------------------------------
 # 2012/12/07 AM  :   v1.2.0 : [cx] 啟用
 # 2012/12/22 PM17:59 v1.2.1 : [cx] 增加取得 baseUrl 網址
+# 2012/12/24 PM10:30 v1.2.1 : [cx] aUrl 修正
 # --------------------------------------------------------
 **/
 class cx_router {
@@ -120,11 +121,11 @@ class cx_router {
 	public function _parseUrl( $baseDir = "index.php" ) {
 		//currdir: /120903/cx_core/veryLittlePHP/index.php/con1/val1/val2/val3?g1=a&g2=b&g3=c
 		$currDir = $_SERVER['REQUEST_URI'];
-
 		if ( false !== strpos( $currDir, '?' ) ) {//get not GET uRL
 			$currDir = str_replace( substr( $currDir, strpos( $currDir, '?' ) ), '', $currDir );
 		}
-		$pattern = '/^\/' . preg_quote( $baseDir, '/' ) . '\/*(.*)$/';
+		// $pattern = '/^\/' . preg_quote( $baseDir, '/' ) . '\/*(.*)$/';
+		$pattern = '/\/' . preg_quote( $baseDir, '/' ) . '\/*(.*)$/';
 
 		preg_match( $pattern, $currDir, $matches );
 
