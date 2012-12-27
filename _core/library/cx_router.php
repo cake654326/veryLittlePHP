@@ -19,19 +19,19 @@ class cx_router {
 	var $sBaseUrl = '';
 	var $sHostUrl = '';
 	var $aREQUEST_URI = array();
-
+	var $aVal_URI = array();
 
 	public function __construct() {
 		
 
 	}
 
-	public function init($_MVC_URL= './' , $sHostUrl = null){
+	public function init($_MVC_URL= './' , $sHostUrl = null , $_index_name = 'index.php'){
 		$this->sMvcUrl  = $_MVC_URL;
 		$this->sHostUrl = $sHostUrl;
 		( $sHostUrl == null ) and $this->sHostUrl = $_SERVER['HTTP_HOST'];
-		$this->aUrl = $this->_parseUrl();
-		$_key = $this->UrlCTRL();
+		$this->aUrl = $this->_parseUrl($_index_name);
+		$_key = $this->UrlCTRL($_index_name);
 		return $this;
 	}
 
@@ -44,17 +44,28 @@ class cx_router {
 	}
 
 
-	public function UrlCTRL(){
+	public function UrlCTRL($_index_name = 'index.php'){
 		//---- get base url [cx] 未最佳化
 		//aREQUEST_URI
 		$_index = 0;
 		foreach($this->aUrl as $key => $val){
 			$_index++;
-			if($val == 'index.php'){
+			if($val == $_index_name){
+				break;
+			}
+			// array_push($this->aREQUEST_URI, $var);
+		}
+
+		$_bad_index = 0;
+		foreach($this->aREQUEST_URI as $key => $val){
+			$_bad_index++;
+			if($val == $_index_name){
 				break;
 			}
 		}
-		// print_cx($this->aUrl);
+		
+		$this->aVal_URI = array_slice($this->aREQUEST_URI ,  $_bad_index , count($this->aREQUEST_URI)); 
+		 // print_cx($this->aVal_URI );
 		// echo $_index . "<br>";
 		$_data = array_slice($this->aUrl , 0 , $_index-1) ;
 		$_str = implode( '/', $_data ) ;

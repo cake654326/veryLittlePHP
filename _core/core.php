@@ -4,10 +4,36 @@
 # CAKE X
 # Core 常用以及簡化工具組
 # --------------------------------------------------------
+# History
+#
 # 2012/11/22 AM  :   v1.1.0 : [cx] loadMod  自動載入 MOD
 #								   loadLib  自動載入 LIB
 # 2012/12/   AM  :   v1.2.0 : [cx] loadView  載入樣板 （會自動清空）
-# 2012/12/22 PM17:59 v1.2.1 : [cx] 增加 baseUrl 
+# 2012/12/22 PM05:59 v1.2.1 : [cx] 增加 baseUrl 
+# 2012/12/27 AM09:14 v1.2.1 : [cx] 增加 redirect  Url
+#
+# --------------------------------------------------------
+# Function
+#
+# redirect( $_url , $_CONTROLLER = TRUE) => 自動取得相對路徑 並且 導入頁面
+#	@ $_url 路徑名
+#	@ $_CONTROLLER TRUE:自動加入 INDEX.PHP
+#
+# Url( $_url , $_CONTROLLER = TRUE) => 自動取得相對路徑
+#	@ $_url 路徑名
+#	@ $_CONTROLLER TRUE:自動加入 INDEX.PHP
+#
+# setBaseUrl( $_url ) => 設定絕對路徑 ,可由設定檔 或者 路由會自動取得
+# getUrl() => 取得 絕對路徑
+#
+# loadView( $_path, $_arr, $_b = false ) => 載入樣板
+#
+# loadMod( $_name ) => 自動include載入模組
+#
+# loadLib( $_name ) => 自動include載入
+#
+# Post() => 取得POST資料
+#
 # --------------------------------------------------------
 **/
 class core {
@@ -20,6 +46,7 @@ class core {
 	var $mSysLib = array();
 	var $mTpl = null;
 	var $mBaseUrl = null;
+	var $mBackUrl = array(); // 後輟
 
 	var $mLayout = array(); //[實驗] !* 未定 載入LAYOUT樣板
 
@@ -39,6 +66,25 @@ class core {
 		$this->mGet = $this->_addslashes_arr( $_GET );
 		$this->mPost = $this->_addslashes_arr( $_POST );
 		$this->mTpl = new template();
+	}
+
+	//MVC HEADER
+	/*
+ 	 * @ $_url : WEB URL ,IF $_CONTROLLER AS FALSE ,NEED index.php/XXX/xx/x/xxx
+	 */
+	public function redirect( $_url , $_CONTROLLER = TRUE){
+		header("Refresh: 0; url=" . $this->Url( $_url , $_CONTROLLER = TRUE ) );
+	}
+
+	public function Url( $_url , $_CONTROLLER = TRUE){
+		//mBackUrl
+		$_back_num = count($this->mBackUrl);
+		$_title_url = "./";
+		for( $_i = 0; $_i < $_back_num ;$_i++){
+			$_title_url .= "../";
+		}
+		($_CONTROLLER == true ) and $_title_url .= $this->config("INDEX") . "/" ;
+		return $_title_url . $_url;
 	}
 
 	public function setBaseUrl( $_url ){

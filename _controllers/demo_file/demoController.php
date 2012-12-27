@@ -43,6 +43,9 @@ class demoController extends baseController
       $mLibDemo = new lib_demo();
 
       $mLibDemo->test();
+
+      // $this->mCore->redirect( "demo_file/demo/showFile" ,true);
+      $this->mCore->redirect( "demo_file/demo/showFile" ,false);
    }
 
    public function showFileAction() {

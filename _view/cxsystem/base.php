@@ -11,18 +11,18 @@
   <link href="../style/css/stylesheets/cake.css" rel="stylesheet" type="text/css" /> -->
 
 	<!-- bootstrap framework -->
-	<link href="<?php echo $Core->getUrl(); ?>/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?php echo $Core->getUrl(); ?>style/bootstrap/css/bootstrap.css" rel="stylesheet">
 
 
 
 			<!-- jquery -->
-		<script type="text/javascript" src="../style/jquery-ui/js/jquery-1.7.1.min.js">
+		<script type="text/javascript" src="<?php echo $Core->getUrl(); ?>style/jquery-ui/js/jquery-1.7.1.min.js">
 </script>
-<script type="text/javascript" src="../style/jquery-ui/js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="<?php echo $Core->getUrl(); ?>style/jquery-ui/js/jquery-ui-1.8.17.custom.min.js"></script>
 
 
-		<script src="../style/cake/ie.js" type="text/javascript">
-</script><script src="../style/cake/core.js" type="text/javascript">
+		<script src="<?php echo $Core->getUrl(); ?>style/cake/ie.js" type="text/javascript">
+</script><script src="<?php echo $Core->getUrl(); ?>style/cake/core.js" type="text/javascript">
 </script>
 
 

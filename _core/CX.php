@@ -28,10 +28,12 @@ class CX {
 		$_host = ( !$mCore->config("base_host" ) )?null:$mCore->config("base_host" );
 
 		$_router = new cx_router();
-		$_path = $_router->init( $MVC_PATH . "_controllers" ,$_host)->getPath();
-		$_url = $_router->aUrl;
+		$_path = $_router->init( $MVC_PATH . "_controllers" ,$_host , $mCore->config("INDEX") )->getPath();
+		
 
-		// print_cx($_url);
+		// $_url = $_router->aUrl;//BUG
+		$_url = $_router->aVal_URI;
+		$mCore->mBackUrl = $_router->aVal_URI;
 
 		$mCore->mBaseUrl = ( !$mCore->config("base_base_url" ) )?$_router->getBaseUrl():$mCore->config("base_base_url" );
 		// echo $mCore->mBaseUrl;
@@ -41,6 +43,7 @@ class CX {
 			exit;
 		}
 		$mCTRL = self::_getController( $_path , $_router->getControllerName()  );
+
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
 		$mCTRL->init();//load init()
 		return $mCTRL->{$sAction}($_router->aData);
