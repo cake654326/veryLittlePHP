@@ -69,11 +69,11 @@ class core {
 	}
 
 	//MVC HEADER
-	/*
+	/* redirect
  	 * @ $_url : WEB URL ,IF $_CONTROLLER AS FALSE ,NEED index.php/XXX/xx/x/xxx
 	 */
 	public function redirect( $_url , $_CONTROLLER = TRUE){
-		header("Refresh: 0; url=" . $this->Url( $_url , $_CONTROLLER = TRUE ) );
+		header("Refresh: 0; url=" . $this->Url( $_url , $_CONTROLLER) );
 	}
 
 	public function Url( $_url , $_CONTROLLER = TRUE){

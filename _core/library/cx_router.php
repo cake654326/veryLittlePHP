@@ -48,6 +48,7 @@ class cx_router {
 		//---- get base url [cx] 未最佳化
 		//aREQUEST_URI
 		$_index = 0;
+		// print_cx($this->aUrl);
 		foreach($this->aUrl as $key => $val){
 			$_index++;
 			if($val == $_index_name){
@@ -63,8 +64,8 @@ class cx_router {
 				break;
 			}
 		}
-		
-		$this->aVal_URI = array_slice($this->aREQUEST_URI ,  $_bad_index , count($this->aREQUEST_URI)); 
+		//未作字串重複解析
+		$this->aVal_URI = array_slice($this->aUrl ,  $_bad_index , count($this->aUrl)); 
 		 // print_cx($this->aVal_URI );
 		// echo $_index . "<br>";
 		$_data = array_slice($this->aUrl , 0 , $_index-1) ;

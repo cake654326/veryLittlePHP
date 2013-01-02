@@ -34,6 +34,7 @@ class CX {
 		// $_url = $_router->aUrl;//BUG
 		$_url = $_router->aVal_URI;
 		$mCore->mBackUrl = $_router->aVal_URI;
+		// print_cx($mCore->mBackUrl);
 
 		$mCore->mBaseUrl = ( !$mCore->config("base_base_url" ) )?$_router->getBaseUrl():$mCore->config("base_base_url" );
 		// echo $mCore->mBaseUrl;

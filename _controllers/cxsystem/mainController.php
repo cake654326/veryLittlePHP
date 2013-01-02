@@ -26,7 +26,8 @@ class mainController extends baseController
 	public function ShowAction( $aUrl ) {
 		// echo "show page ";
 		// print_cx( $aUrl );
-		echo $this->mCore->loadView( './_view/cxsystem/base.php', array() , true );
+		// echo $this->mCore->loadView( './_view/cxsystem/base.php', array() , true );
+		echo $this->mCore->loadView( './_view/cxsystem/demo.php', array() , true );
 	}
 
 }
