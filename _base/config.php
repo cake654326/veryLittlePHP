@@ -3,6 +3,8 @@
  # 通用 設定檔案
  ***/
 $Core->setConfig('CXDEBUG' ,true);
+$Core->setConfig('LOGFILENAME' , "_log");//log 系統檔案路徑
+$Core->setConfig('SYSLOGNAME' , "system.log");//log 系統檔案名稱
 
 /**
  # MVC 模式 設定檔
@@ -11,7 +13,8 @@ $Core->setConfig('CXDEBUG' ,true);
 $Core->setConfig("INDEX" , "index.php");
 
 //設定INDEX自動進入控制器入口
-$Core->setConfig("baseController" , "/demo_file/demo/add/bbb?g1=a");
+$Core->setConfig("baseController" , "/cxsystem/main/show");
+//index.php/cxsystem/main/show
 
 //-- 框架控制台帳號密碼 --
 $Core->setConfig("CXSYSTEM" , true ); //是否啟用 框架控制器

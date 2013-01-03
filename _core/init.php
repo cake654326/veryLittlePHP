@@ -20,6 +20,7 @@ require 'template.php';
 require 'core.php';
 require 'baseController.php';
 $Core = new core();
+$Core->init();
 $Core->mConfig['file_path'] = $_path;
 require $_path.'_base/config.php';
 ini_set( 'session.gc_maxlifetime', $Core->config( 'gc_maxlifetime' ) );

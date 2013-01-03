@@ -4,35 +4,52 @@
 # CAKE X
 # Core 常用以及簡化工具組
 # --------------------------------------------------------
-# History
+# 「History」
 #
 # 2012/11/22 AM  :   v1.1.0 : [cx] loadMod  自動載入 MOD
 #								   loadLib  自動載入 LIB
 # 2012/12/   AM  :   v1.2.0 : [cx] loadView  載入樣板 （會自動清空）
 # 2012/12/22 PM05:59 v1.2.1 : [cx] 增加 baseUrl 
-# 2012/12/27 AM09:14 v1.2.1 : [cx] 增加 redirect  Url
+# 2012/12/27 AM09:14 v1.2.1 : [cx] 增加 redirect Url
 #
 # --------------------------------------------------------
-# Function
+#「Function」(常用)
 #
-# redirect( $_url , $_CONTROLLER = TRUE) => 自動取得相對路徑 並且 導入頁面
+#@寫入LOG檔案 - 設定檔可設定 系統路徑以及系統檔名
+# log(  $_msg , $_file_name = null ,$_path = null )
+#  @ $_msg 訊息
+#  @ $_file_name 檔案名稱( 預設為 設定檔資料)
+#  @ $_path 檔案路徑( 預設為 設定檔資料)
+#
+#@自動取得相對路徑 並且 導入頁面
+# redirect( $_url , $_CONTROLLER as TRUE)
 #	@ $_url 路徑名
-#	@ $_CONTROLLER TRUE:自動加入 INDEX.PHP
+#	@ $_CONTROLLER = TRUE : 自動加入 INDEX.PHP (MVC入口)
+#					 FALSE: 不會自動增加index.php，適用載入樣式或傳統開發
 #
-# Url( $_url , $_CONTROLLER = TRUE) => 自動取得相對路徑
+#@自動取得相對路徑 
+# Url( $_url , $_CONTROLLER as TRUE)     
 #	@ $_url 路徑名
-#	@ $_CONTROLLER TRUE:自動加入 INDEX.PHP
+#	@ $_CONTROLLER = TRUE : 自動加入 INDEX.PHP (MVC入口)
+#					 FALSE: 不會自動增加index.php，適用載入樣式或傳統開發
 #
-# setBaseUrl( $_url ) => 設定絕對路徑 ,可由設定檔 或者 路由會自動取得
-# getUrl() => 取得 絕對路徑
+#@設定絕對路徑 ,可由設定檔 或者 路由會自動取得
+# setBaseUrl( $_url )                    
 #
-# loadView( $_path, $_arr, $_b = false ) => 載入樣板
+#@取得 絕對路徑
+# getUrl()                               
 #
-# loadMod( $_name ) => 自動include載入模組
+#@CORE端載入樣板(已經自動宣告樣板物件)
+# loadView( $_path, $_arr, $_b  = false )
 #
-# loadLib( $_name ) => 自動include載入
+#@自動include載入模組
+# loadMod( $_name )  
 #
-# Post() => 取得POST資料
+#@自動include載入
+# loadLib( $_name )   
+#
+#@取得POST資料
+# Post() 
 #
 # --------------------------------------------------------
 **/
@@ -47,6 +64,7 @@ class core {
 	var $mTpl = null;
 	var $mBaseUrl = null;
 	var $mBackUrl = array(); // 後輟
+	var $mLog = null;
 
 	var $mLayout = array(); //[實驗] !* 未定 載入LAYOUT樣板
 
@@ -66,7 +84,24 @@ class core {
 		$this->mGet = $this->_addslashes_arr( $_GET );
 		$this->mPost = $this->_addslashes_arr( $_POST );
 		$this->mTpl = new template();
+		
 	}
+
+	public function init(){
+		$this->loadSysLib('cx_log');
+		$this->mLog = new cx_log();
+
+		return $this;
+	}
+
+	public function log(  $_msg , $_file_name = null ,$_path = null ){
+		( $_path == null ) and $_path = "./" . $this->config( 'LOGFILENAME' ) ;
+		( $_file_name == null ) and $_file_name =  $this->config( 'SYSLOGNAME' ) ;
+		$this->mLog->lfile( $_path . '/' . $_file_name );
+		$this->mLog->lwrite($_msg);
+		$this->mLog->lclose();
+	}
+
 
 	//MVC HEADER
 	/* redirect
