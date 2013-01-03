@@ -1,25 +1,39 @@
 <?php
-	/**
-	* @author      Cake X
-	* @link
-	* @version     1.3.2
-	* @history:
-	*   2012 10 24  + save()          = 重寫之前版本的SAVE , 無法相容 以前專案
-	*        		+ setTable
-	*
-	*	2012 11 06  + Execute()       = 簡化 execute 長度并且建立錯誤簡化 ADODB
-	*	2012 11 08  + sqlExec()       = 使 EXECUTE 回傳 this
-	*				+ getArray()      = 簡化 Adodb  GetArray
-	*				+ getCout()       = 取得資料數量 簡化 adodb 函數名
-	*
-	*	2012 11 14  + autoSave        = 簡化SAVE 采固定PK的方式
-	*				+ checkTableArray = 為save 增加自動化 欄位過濾
-	*
-	*	2012 11 15  ? setTableData    = 設定 INSERT OR UPDATE 預設載入的 欄位名稱，將會自動檢查。
-	*
-	* 	2012 11 29  + __construct = 增加 CORE DB 自動加載
-	* **/
+/**
+# core.php
+#@author      Cake X 
+#@link
+#@version     DB v1.1.6
+#
+# ADODB 常用以及簡化工具組
+# --------------------------------------------------------
+# 「History」
+#
+# 2012/10/24 AM  :   v1.1 : [cx] save()  重寫之前版本的SAVE , 無法相容 以前專案
+#								 setTable
+#
+# 2012/11/06 AM  :   v1.1.1 : [cx] Execute()  簡化 execute 長度并且建立錯誤簡化 ADODB
+# 2012/11/08 AM  :   v1.1.2 : [cx] sqlExec()  使 EXECUTE 回傳 this
+#								 getArray() 簡化 Adodb  GetArray
+#								 getCout()  取得資料數量 簡化 adodb 函數名
+#
+# 2012/11/14 AM  :   v1.1.3 : [cx] autoSave 簡化SAVE 采固定PK的方式
+#							  	   checkTableArray 為save 增加自動化 欄位過濾
+#
+# 2012/11/15 AM  :   v1.1.4 : [cx] setTableData 設定 INSERT OR UPDATE 預設載入的 欄位名稱，將會自動檢查。
+#
+# 2012/11/29 AM  :   v1.1.5 : [cx] __construct = 增加 CORE DB 自動加載
+#
+# 2013/01/03 pm14:00 v1.1.6 : [cx] Execute = Add auto message to log file
+#
+# --------------------------------------------------------
+#「Function」(常用)
+#
+#
+#
+**/
 class cx_db {
+	var $mCore;
 	var $mConn;
 	var $mTable;
 	var $mWhere;
@@ -32,8 +46,10 @@ class cx_db {
 			global $Core;
 			if($Core){
 				$_conn = &$Core->getDB();
+				$this->mCore = &$Core;
 			}else{
-				echo "ERROR:[cx_db] don't have Core OR __construct( $_conn ) val adodb loading";
+				$_msg = "ERROR:[cx_db] don't have Core OR __construct( $_conn ) val adodb loading";
+				$Core->log($_msg);
 				exit(0);
 			}
 		}
@@ -105,7 +121,9 @@ class cx_db {
 		$this->mRs  = $this->mConn->Execute( $_sql , $_arr );
 		if ( !$this->mRs  ) {
 			$_error =   $this->getError();
-			$this->setTitle( "CX_DB Execute Error:" . $_error );
+			$_msg = "CX_DB Execute Error:" . $_error ;
+			$this->mCore->log( $_msg ); //bug
+			$this->setTitle( $_msg );
 			return false;
 		}
 		return $this->mRs;
