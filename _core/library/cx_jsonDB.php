@@ -39,12 +39,12 @@ abstract class cx_jsonDB extends cx_db{
 	 *				 	)
 	 *			 );
 	 */
-	public function sort_table_dev( $_sort_key ) {
+	public function sort_table_dev( $_sort_key , $_table_val = null) {
 		$tmpData = array();
 		$sort_data = array();
 
 
-		$_table = $this->mTableData;
+		($_table_val == null) and $_table_val = $this->mTableData;
 		//debug
 		/*
 		$_table = array();
@@ -58,7 +58,7 @@ abstract class cx_jsonDB extends cx_db{
 		}*/
 
 
-		$_ttt = $this->_sort_table_set_data( $_table, $_sort_key );
+		$_ttt = $this->_sort_table_set_data( $_table_val, $_sort_key );
 		return $_ttt;
 	}
 
@@ -68,8 +68,9 @@ abstract class cx_jsonDB extends cx_db{
 	public function _sort_oneVal_dev( $ar1, $ar2 ) {
 		//print_cx($ar1);
 		//exit(0);
-		$_tmp1 = ord( $ar1[0][$this->mSearchKey1] );
-		$_tmp2 = ord( $ar2[0][$this->mSearchKey1] );
+
+		$_tmp1 = (is_float($ar1[0][$this->mSearchKey1]))?$ar1[0][$this->mSearchKey1]:ord( $ar1[0][$this->mSearchKey1] );
+		$_tmp2 = (is_float($ar2[0][$this->mSearchKey1]))?$ar2[0][$this->mSearchKey1]:ord( $ar2[0][$this->mSearchKey1] );
 		//$_tmp1 = ord( $ar1[$this->mSearchKey1] );
 		//$_tmp2 = ord( $ar2[$this->mSearchKey1] );
 		//ChromePhp::log("mSearchKey1:" ,$this->mSearchKey1);
@@ -88,7 +89,8 @@ abstract class cx_jsonDB extends cx_db{
 	 * 多組排序 建立
 	 */
 	private function _sort_table_set_data( $_table_data , $_sort_key ) {
-		//print_cx($_table_data);
+
+		// print_cx($_table_data);
 		$_ans = array();
 
 		$_now_key = $_sort_key[0]['no'];

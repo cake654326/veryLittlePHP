@@ -265,6 +265,7 @@ class core {
 	function is_debug() {
 		if ( defined( 'CXDEBUG' ) ) {
 			if ( CXDEBUG == true ) {
+				
 				//ChromePhp::log("ADODB SQL 總花費時間", $this->_cx_all_time);
 				return true;
 			}

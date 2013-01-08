@@ -32,6 +32,7 @@
 #
 #
 **/
+
 class cx_db {
 	var $mCore;
 	var $mConn;
@@ -49,8 +50,7 @@ class cx_db {
 				$this->mCore = &$Core;
 			}else{
 				$_msg = "ERROR:[cx_db] don't have Core OR __construct( $_conn ) val adodb loading";
-				$Core->log($_msg);
-				exit(0);
+				exit;
 			}
 		}
 		$this->mConn = &$_conn;
@@ -120,7 +120,7 @@ class cx_db {
 	public function Execute( $_sql, $_arr ) {
 		$this->mRs  = $this->mConn->Execute( $_sql , $_arr );
 		if ( !$this->mRs  ) {
-			$_error =   $this->getError();
+			$_error = $this->getError();
 			$_msg = "CX_DB Execute Error:" . $_error ;
 			$this->mCore->log( $_msg ); //bug
 			$this->setTitle( $_msg );

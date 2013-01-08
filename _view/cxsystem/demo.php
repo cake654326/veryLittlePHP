@@ -74,6 +74,8 @@
       <div class="row-fluid">
 <!-- --------------- row-fluid ------------------ -->
         <div class="span2" id="cx_left">
+
+
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="active">
@@ -92,10 +94,9 @@
               <li class="nav-header">User</li>
               <li><a href="#">Link</a></li>
               <li><a href="#">Link</a></li>
-
             </ul>
-
           </div> 
+
         </div>
 
 

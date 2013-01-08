@@ -30,10 +30,13 @@ class mainController extends baseController
 
 		// $this->mCore->log( 'test log:' . $aUrl[0] ,'cake.txt');
 		//$this->mCore->getDB()->Execute("select * from abc",array() );
-		$db = new cx_db();
-		$db->Execute("select * from abc",array() );
+		// $db = new cx_db();
+		// $db->Execute("select * from abc",array() );
 
-		echo $this->mCore->loadView( './_view/cxsystem/demo.php', array() , true );
+		// echo $this->mCore->loadView( './_view/cxsystem/demo.php', array() , true );
+		$aView = array();
+		$aView['vLeft'] = $this->mCore->loadView( './_view/cxsystem/vLeft.php', array() , true );
+		echo $this->mCore->loadView( './_view/cxsystem/base.php', $aView , true );
 	}
 
 }
