@@ -34,6 +34,15 @@ class mainController extends baseController
 		// $db->Execute("select * from abc",array() );
 
 		// echo $this->mCore->loadView( './_view/cxsystem/demo.php', array() , true );
+		// $this->mCore->loadLib("lib_demo");
+		// $_demo = new lib_demo();
+		// $_demo->test();
+
+		$this->mCore->loadLib("lib_demo" , true , "demo");
+		$this->mCore->demo->test();
+
+
+
 		$aView = array();
 		$aView['vLeft'] = $this->mCore->loadView( './_view/cxsystem/vLeft.php', array() , true );
 		echo $this->mCore->loadView( './_view/cxsystem/base.php', $aView , true );
