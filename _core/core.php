@@ -14,6 +14,7 @@
 # 2013/01/03 AM09:40 v1.2.2 : [cx] 增加 log
 # 2013/01/09 PM04:06 v1.2.3 : [cx] 增加 _cx_init_object , _cx_load_class 提供載入物件並建立
 # 2013/01/09 PM04:06 v1.2.3 : [cx] 更新 loadLib ,向下相容 提供自動初始化
+# 2013/01/10 AM11:02 v1.2.3 : [cx] 更新 loadMod ,向下相容 提供自動初始化
 #
 # --------------------------------------------------------
 #「Function」(常用)
@@ -46,7 +47,11 @@
 # loadView( $_path, $_arr, $_b  = false )
 #
 #@自動include載入模組
-# loadMod( $_name  )  
+# loadMod( $_name , $_autoSet = false , $_object_name = null ,$_params = null )     
+#	@ $_name        物件名
+#	@ $_autoSet     是否啟用自動初始化
+#	@ $_object_name 自定物件名稱
+#	@ $_params      初始化參數參數1
 #
 #@自動include載入Lib
 # loadLib( $_name , $_autoSet = false , $_object_name = null ,$_params = null )     
@@ -148,21 +153,20 @@ class core {
 		return $val;
 	}
 
-	public function loadMod( $_name ) {
-		//array_search
-		if ( !in_array( $_name, $this->mMod )  ) {
-
+	public function loadMod( $_name , $_autoSet = false , $_object_name = null ,$_params = null ) {
+		if ( !in_array( $_name, $this->mMod ) ) {
 			$_path = $this->config( 'file_path' ).
 				$this->config( 'mod_name' ) .
 				'/'.$_name.'.php';
 			
-			if( !file_exists($_path) ) return false;
-			array_push( $this->mMod, $_name );
-			require $_path;
+			if(! $this->_cx_load_class("mMod" ,$_path,$_name,$_autoSet,$_object_name,$_params) ) return false;
+		}elseif( $_autoSet == true ){
+			if(! $this->_cx_init_object($_name ,$_object_name , $_params) ) return false;
 			return true;
 		}
 		return false;
 	}
+
 //_cx_load_class($_type , $_path ,$_library, $_autoSet = false ,$_params = null, $_object_name = null){
 	public function loadLib( $_name , $_autoSet = false , $_object_name = null ,$_params = null ) {
 		if ( !in_array( $_name, $this->mLib ) ) {
