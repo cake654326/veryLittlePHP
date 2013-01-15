@@ -10,6 +10,7 @@
 class demoController extends baseController
 {
    //public $person = array();
+   public $mPDir = null;
 
    public function __construct( $_core ) {
       parent::__construct( $_core );
@@ -45,39 +46,47 @@ class demoController extends baseController
       $mLibDemo->test();
 
       // $this->mCore->redirect( "demo_file/demo/showFile" ,true);
-      $this->mCore->redirect( "demo_file/demo/showFile" ,false);
+      // $this->mCore->redirect( "demo_file/demo/showFile" ,false);//自動轉跳
    }
 
    public function showFileAction() {
       //'./_controllers'
       echo $this->mCore->getBaseUrl();
       echo "<br>";
-      $dir_array = $this->dirToArray("./_controllers");
-      print_cx($dir_array);
+      $dir_array = $this->dirToArray( "./_controllers" );
+      $this->process_dir($dir_array,'');
+      print_cx( $dir_array );
+      print_cx( $this->mPDir );
    }
 
-   public function dirToArray($dir) { 
-   
-   $result = array(); 
+   public function dirToArray( $dir ) {
+      $result = array();
 
-   $cdir = scandir($dir); 
-   foreach ($cdir as $key => $value) 
-   { 
-      if (!in_array($value,array(".",".."))) 
-      { 
-         if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) 
-         { 
-            $result[$value] = $this->dirToArray($dir . DIRECTORY_SEPARATOR . $value); 
-         } 
-         else 
-         { 
-            $result[] = $value; 
-         } 
-      } 
-   } 
-   
-   return $result; 
-} 
+      $cdir = scandir( $dir );
+      foreach ( $cdir as $key => $value ) {
+         if ( !in_array( $value, array( ".", ".." ) ) ) {
+            if ( is_dir( $dir . DIRECTORY_SEPARATOR . $value ) ) {
+               $result[$value] = $this->dirToArray( $dir . DIRECTORY_SEPARATOR . $value );
+            }else {
+               $result[] = $value;
+            }
+         }
+      }
+
+      return $result;
+   }
+
+   private function process_dir( $dirarray, $pathsofar ) {
+      foreach ( $dirarray as $key => $value ) {
+         if ( is_array( $value ) ) {
+            $this->process_dir( $value, $pathsofar . $key . '/' );
+         } else {
+            // add_dir( $pathsofar . $value );
+            $this->mPDir[] = $pathsofar . $value;
+         }
+      }
+   }
+
 
 }
 ?>
