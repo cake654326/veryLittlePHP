@@ -74,6 +74,17 @@ function alertMsg( $_msg, $_js ) {
 	$mTpl->clear();
 	return $_val;
 }
+function __autoload($class_name)
+  {
+      $filename = strtolower($class_name) .'.php';
+      // $file = site_path .'classes' .DIRECTORY_SEPARATOR .$filename;
+       $file = "_base/" . $filename;
+      if(!file_exists($file))
+      {
+          return false;
+      }
+      include_once ($file);
+  }
 
 //CX.php 為MVC模式物件 
 require 'CX.php';

@@ -46,7 +46,7 @@ class CX {
 		$mCTRL = self::_getController( $_path , $_router->getControllerName()  );
 
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
-		$mCTRL->init();//load init()
+		$mCTRL->init(  $_router->aData );//load init()
 		return $mCTRL->{$sAction}($_router->aData);
 
 	}

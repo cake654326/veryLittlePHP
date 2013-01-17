@@ -9,7 +9,7 @@ abstract class baseController {
 		
 	}
 
-	abstract public function init();
+	abstract public function init( $_url );
 
 }
 ?>
