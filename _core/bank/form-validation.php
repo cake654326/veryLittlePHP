@@ -8,7 +8,7 @@
  * @link        http://github.com/asdasDan/Form-Validation
  * @author      Cake X
  * @link        https://github.com/cake654326/Cake-Form-Validation
- * @version     0.0.2
+ * @version     0.0.3
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,19 +33,20 @@ class validateForm {
 
     protected $_formSuccess  = false;
     protected $_errorPhrases = array(
-        'required'     => ' %1 不可為空',
-        'min_length'   => ' %1 字數不可小於 %2 ',
-        'max_length'   => ' %1 字數大於 %2 ',
-        'exact_length' => ' %1 長度只可為 %2 ',
-        'matches'      => 'The %1 field must match the %2.',
-        'valid_email'  => 'The %1 field must be a valid E-Mail Address.',
-        'not_equal'    => array(
-                    'post:key' => 'The %1 field must not be the same as the %2 field.',
-                    'string'   => 'The %1 field must not be %2.'),
-        'depends'      => 'The %1 field depends on the %2 field being valid.',
-        'digit'     => ' %1 只能為數字',
-        'alpha'     => ' %1 只能為英文字母',
-        'alnum'     => ' %1 只能為英數混合'
+                    'required'     => ' %1 不可為空',
+                    'min_length'   => ' %1 字數不可小於 %2 ',
+                    'max_length'   => ' %1 字數大於 %2 ',
+                    'exact_length' => ' %1 長度只可為 %2 ',
+                    'matches'      => 'The %1 field must match the %2.',
+                    'valid_email'  => 'The %1 field must be a valid E-Mail Address.',
+                    'not_equal'    => array(
+                    'post:key'     => 'The %1 field must not be the same as the %2 field.',
+                    'string'       => 'The %1 field must not be %2.'),
+                    'depends'      => 'The %1 field depends on the %2 field being valid.',
+                    'digit'        => ' %1 只能為數字',
+                    'alpha'        => ' %1 只能為英文字母',
+                    'alnum'        => ' %1 只能為英數混合',
+                    'sql'          => ' %1 含有非法字元'
         );
     // Array of rule sets, fieldName => PIPE seperated ruleString
     protected $_ruleSets             = array();
@@ -621,6 +622,16 @@ class validateForm {
             }
     }
 
+    //cake model 
+    //判斷sql 危險字元
+    protected function _validateSql($inputName ,$ruleName,array $ruleargs){
+            $inputVal = $this->post($inputName);
+            if(!$this->_cx_checkValue($inputVal,4)){
+                $this->_setError($inputName, $ruleName, $this->_getLabel($inputName));
+
+            }
+    }
+
     private function _cx_checkValue( $Input, $Type='', $len='' ) {
     $Str = trim( $Input ); //清空前後空白
     $Clean_Str = $Str;
@@ -639,10 +650,31 @@ class validateForm {
     case '3':   //英數混合
         $Chk = ctype_alnum( $Clean_Str );
         break;
+    case '4':   //SQL 危險字元
+        $symbol_q = '';
+        if (substr_count($Clean_Str,"'")<>0)       $symbol_q = $symbol_q ."'";
+        if (substr_count($Clean_Str,"+")<>0)       $symbol_q = $symbol_q ."+";
+        if (substr_count($Clean_Str,"%")<>0)       $symbol_q = $symbol_q ."%";
+        if (substr_count($Clean_Str,"=")<>0)       $symbol_q = $symbol_q ."=";
+        if (substr_count($Clean_Str,"--")<>0)      $symbol_q = $symbol_q ."--";
+        if (substr_count($Clean_Str," _")<>0)      $symbol_q = $symbol_q ." _";
+        if (substr_count($Clean_Str," and ")<>0)   $symbol_q = $symbol_q ." and ";
+        if (substr_count($Clean_Str," or ")<>0)    $symbol_q = $symbol_q ." or ";
+        if (substr_count($Clean_Str,"script")<>0)  $symbol_q = $symbol_q ."script";
+        if (substr_count($Clean_Str,"UNION")<>0)   $symbol_q = $symbol_q ."UNION";
+        if (substr_count($Clean_Str,"SELECT")<>0)  $symbol_q = $symbol_q ."SELECT";
+        if (substr_count($Clean_Str,"FROM")<>0)    $symbol_q = $symbol_q ."FROM";
+        if (substr_count($Clean_Str,"WHERE")<>0)   $symbol_q = $symbol_q ."WHERE";
+        if (substr_count($Clean_Str,"VALUES")<>0)  $symbol_q = $symbol_q ."VALUES";
+        if (substr_count($Clean_Str,"UPDATE")<>0)  $symbol_q = $symbol_q ."UPDATE";
+        if (substr_count($Clean_Str,"INSERT")<>0)  $symbol_q = $symbol_q ."INSERT";
+        ($symbol_q <> "") and $Chk = false;
+        break;
     default:
         $Chk = 1;
         break;
     }
+     ($Clean_Str == '') and $Clean_Str = true;
     if ( $Chk ) {
         return $Clean_Str;
     }else {

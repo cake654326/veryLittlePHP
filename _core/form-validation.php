@@ -4,11 +4,9 @@
  * Form Validation
  *
  * @package     Cake-Form-Validation
- * @author      Dan LaManna
- * @link        http://github.com/asdasDan/Form-Validation
  * @author      Cake X
- * @link        https://github.com/cake654326/Cake-Form-Validation
- * @version     0.0.3
+ * @link        https://github.com/cake654326/veryLittlePHP.git
+ * @version     0.5
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +24,17 @@
  *          add digit function:  判斷全數字
  *          add alpha function:  判斷全英文 
  *          add alnum function:  判斷全英文數字
- * 
+ *
+ * 2013-01/xx:
+ *          add alnum function:  判斷SQL 危險字元
+ *
+ * 2013-01/31:
+ *          改為自定 POST AND GET TYPE
+ *
  **/
  
 class validateForm {
-
+    private $mServer = array();//post or get
     protected $_formSuccess  = false;
     protected $_errorPhrases = array(
                     'required'     => ' %1 不可為空',
@@ -116,31 +120,43 @@ class validateForm {
      *
      * @return void
      */
-    public function runValidation() {
-        if ($this->formSubmitted()) {
+    public function runValidation($_server_tag = 'POST') {
+        switch($_server_tag){
+            case "POST":
+                $this->mServer = $_POST;
+            break;
+            case "GET":
+                $this->mServer = $_GET;
+                // print_cx($_GET);
+            break;
+            default:
+                $this->_formSuccess = true;
+                return;
+            break;
 
-            $this->_runValidation();
         }
-        return;
+        $this->_runValidation();
+
+        return $this->_formSuccess;
     }
 
     /**
-     * Takes and trims each $_POST field, if it has any rules, we parse the rule string and run
-     * each rule against the $_POST value. Sets formSuccess to true if there are no errors
+     * Takes and trims each $this->mServer field, if it has any rules, we parse the rule string and run
+     * each rule against the $this->mServer value. Sets formSuccess to true if there are no errors
      * afterwards.
      */
     protected function _runValidation() {
 
         $this->_forceFail = false;
-
-        foreach ($_POST as $inputName => $inputVal) {
-            $_POST[$inputName] = trim($_POST[$inputName]);
+// print_cx($this->mServer);
+        foreach ($this->mServer as $inputName => $inputVal) {
+            $this->mServer[$inputName] = trim($this->mServer[$inputName]);
 
             if (array_key_exists($inputName, $this->_ruleSets)) {
                
                 foreach ($this->_parseRuleString($this->_ruleSets[$inputName]) as $eachRule) {
                      //echo ".2-" . $eachRule;
-                    $this->_validateRule($inputName, $_POST[$inputName], $eachRule);
+                    $this->_validateRule($inputName, $this->mServer[$inputName], $eachRule);
                 }
             }
         }
@@ -153,7 +169,7 @@ class validateForm {
     }
 
     /**
-     * Adds a rule to a $_POST field.
+     * Adds a rule to a $this->mServer field.
      *
      * @param string $inputField Name of the field to add a rule to
      * @param string $ruleSets PIPE seperated string of rules
@@ -264,26 +280,27 @@ class validateForm {
 
     /**
      * Allows for an accesor to any/all post values, if a value of null is passed as the key, it
-     * will recursively find all keys/values of the $_POST array. It also automatically trims
+     * will recursively find all keys/values of the $this->mServer array. It also automatically trims
      * all values.
      *
-     * @param string $key Key of $_POST to be found, pass null for all Key => Val pairs.
-     * @param boolean $trim Defaults to true, trims all $_POST values.
+     * @param string $key Key of $this->mServer to be found, pass null for all Key => Val pairs.
+     * @param boolean $trim Defaults to true, trims all $this->mServer values.
      * @return string/array Array of post values if null is passed as key, string if only one key is desired.
      */
     public function post($key=null, $trim=true) {
 
         $returnValue = null;
+        // $returnValue = '';
 
         if (is_null($key)) {
 
             $returnValue = array();
 
-            foreach ($_POST as $key => $val) {
+            foreach ($this->mServer as $key => $val) {
                 $returnValue[$key] = $this->post($key, $trim);
             }
         } else {
-            $returnValue = (array_key_exists($key, $_POST)) ? (($trim) ? trim($_POST[$key]) : $_POST[$key]) : false;
+            $returnValue = (array_key_exists($key, $this->mServer)) ? (($trim) ? trim($this->mServer[$key]) : $this->mServer[$key]) : false;
         }
 
         return $returnValue;
@@ -302,11 +319,11 @@ class validateForm {
         $mError = '';
         $errorOutput = $errorsStart;
                 
-	$i = 0;
+    $i = 0;
 
         if (!empty($this->_errorSet)) {
             foreach ($this->_errorSet as $fieldName => $error) {
-	    	if ($i === $limit) { break; }
+            if ($i === $limit) { break; }
 
                 $errorOutput .= $errorStart;
                 $errorOutput .= $error;
@@ -329,7 +346,7 @@ class validateForm {
         if (!empty($this->_errorSet)) {
             foreach ($this->_errorSet as $fieldName => $error) 
             {
-	    	        if ($i === 1) { break; }
+                    if ($i === 1) { break; }
                 $mError  = $error;
                 $i++;
             }
@@ -387,11 +404,11 @@ class validateForm {
     }
 
     /**
-     * Takes a $_POST input name, it's value, and the rule it's being validated against (ex: max_length[16])
+     * Takes a $this->mServer input name, it's value, and the rule it's being validated against (ex: max_length[16])
      * and adds an error to the errorSet if it fails validation of the rule.
      *
-     * @param string $inputName Name of $_POST field
-     * @param string $inputVal Value of the $_POST field
+     * @param string $inputName Name of $this->mServer field
+     * @param string $inputVal Value of the $this->mServer field
      * @param string $ruleName Rule to be validated against, including args (exact_length[5])
      * @return void
      */
@@ -447,7 +464,7 @@ class validateForm {
     /**
      * Used to run a callback for the callback rule, as well as pass in a default
      * argument of the post value. For example the username field having a rule:
-     * callback[userExists] will eval userExists($_POST[username]) - Note the use
+     * callback[userExists] will eval userExists($this->mServer[username]) - Note the use
      * of eval over call_user_func is in case the function is not user defined.
      *
      * @param type $inputArg
@@ -482,14 +499,14 @@ class validateForm {
     }
 
     protected function _validateHoneypot($inputName, $ruleName, array $ruleArgs) {
-        if ($_POST[$inputName] != '') {
+        if ($this->mServer[$inputName] != '') {
             $this->_forceFail = true;
         }
     }
 
     protected function _validateCallback($inputName, $ruleName, array $ruleArgs) {
-        if (function_exists($ruleArgs[1]) && !empty($_POST[$inputName])) {
-            $this->_runCallback($_POST[$inputName], $ruleArgs[1]);
+        if (function_exists($ruleArgs[1]) && !empty($this->mServer[$inputName])) {
+            $this->_runCallback($this->mServer[$inputName], $ruleArgs[1]);
         }
     }
 
@@ -506,7 +523,7 @@ class validateForm {
             $inputVal = $this->post($inputName);
             
             if (preg_match('/post:(.*)/', $doNotEqual)) {
-                if ($inputVal == $_POST[str_replace('post:', '', $doNotEqual)]) {
+                if ($inputVal == $this->mServer[str_replace('post:', '', $doNotEqual)]) {
                     $this->_setError($inputName, $ruleName . ',post:key', array($this->_getLabel($inputName), $this->_getLabel(str_replace('post:', '', $doNotEqual))));
                     continue;
                 }
@@ -522,7 +539,7 @@ class validateForm {
     protected function _validateMatches($inputName, $ruleName, array $ruleArgs) {
         $inputVal = $this->post($inputName);
         
-        if ($inputVal != $_POST[$ruleArgs[1]]) {
+        if ($inputVal != $this->mServer[$ruleArgs[1]]) {
             $this->_setError($inputName, $ruleName, array($this->_getLabel($inputName), $this->_getLabel($ruleArgs[1])));
         }
     }
@@ -531,7 +548,7 @@ class validateForm {
         $inputVal = $this->post($inputName);
         
         if (!preg_match("/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i", $inputVal)) {
-            if (!$this->_fieldIsRequired($inputName) && empty($_POST[$inputName])) {
+            if (!$this->_fieldIsRequired($inputName) && empty($this->mServer[$inputName])) {
                 break;
             }
             
@@ -543,7 +560,7 @@ class validateForm {
 
         $inputVal = $this->post($inputName);
         if (strlen($inputVal) != $ruleArgs[1]) { // $ruleArgs[0] is [length] $rulesArgs[1] is just length
-            if (!$this->_fieldIsRequired($inputName) && empty($_POST[$inputName])) {
+            if (!$this->_fieldIsRequired($inputName) && empty($this->mServer[$inputName])) {
                 break;
             }
 
@@ -554,7 +571,7 @@ class validateForm {
     protected function _validateMaxLength($inputName, $ruleName, array $ruleArgs) {
         $inputVal = $this->post($inputName);
         if (strlen($inputVal) > $ruleArgs[1]) { // $ruleArgs[0] is [length] $rulesArgs[1] is just length
-            if (!$this->_fieldIsRequired($inputName) && empty($_POST[$inputName])) {
+            if (!$this->_fieldIsRequired($inputName) && empty($this->mServer[$inputName])) {
                 break;
             }
             
@@ -568,7 +585,7 @@ class validateForm {
         $inputVal = $this->post($inputName);
 
         if (strlen($inputVal) < $ruleArgs[1]) { // $ruleArgs[0] is [length] $rulesArgs[1] is just length
-            if (!$this->_fieldIsRequired($inputName) && empty($_POST[$inputName])) {
+            if (!$this->_fieldIsRequired($inputName) && empty($this->mServer[$inputName])) {
                 break;
             }
             
@@ -626,7 +643,8 @@ class validateForm {
     //判斷sql 危險字元
     protected function _validateSql($inputName ,$ruleName,array $ruleargs){
             $inputVal = $this->post($inputName);
-            if(!$this->_cx_checkValue($inputVal,4)){
+            if($this->_cx_checkValue($inputVal,4) == false){
+                // echo "<br>error:" . $inputVal;
                 $this->_setError($inputName, $ruleName, $this->_getLabel($inputName));
 
             }
@@ -668,13 +686,16 @@ class validateForm {
         if (substr_count($Clean_Str,"VALUES")<>0)  $symbol_q = $symbol_q ."VALUES";
         if (substr_count($Clean_Str,"UPDATE")<>0)  $symbol_q = $symbol_q ."UPDATE";
         if (substr_count($Clean_Str,"INSERT")<>0)  $symbol_q = $symbol_q ."INSERT";
-        ($symbol_q <> "") and $Chk = false;
+        // echo "xxx:" . $Clean_Str . "  q:" .$symbol_q . "<br>";
+        // exit;
+        ($symbol_q != '') and $Chk = 2;
         break;
     default:
         $Chk = 1;
         break;
     }
-    if ( $Chk ) {
+    ($Clean_Str == '') and $Clean_Str = true;
+    if ( $Chk == 1 ) {
         return $Clean_Str;
     }else {
         return false;
