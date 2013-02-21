@@ -28,7 +28,7 @@
 #
 # 2013/02/02                : [cx] getArray( $eq ) 直接取得陣列KEY之VALUE，NULL = 得到全部，若無資料則回傳false
 #
-# 2013/02/21                : [cx][未測試] 增加getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
+# 2013/02/21                : [cx][未測試] 增加 getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
 #
 # --------------------------------------------------------
 #「Function」(常用)
@@ -45,6 +45,7 @@ class cx_db {
 	var $mPk;
 	var $mRs;
 	var $mDrives = 'ado_mssql';
+	var $mDrives_keyName = '';//mysql: Field ,mssql:COLUMN_NAME
 
 	public function __construct( $_conn = null ) {
 		//parent::__construct();
@@ -186,11 +187,15 @@ class cx_db {
 		$_sql = '';
 		switch($this->mDrives){
 			case "mysql":
-				$_sql = "exec DESCRIBE " . $_table_name;
+				$_sql = "DESCRIBE " . $_table_name;
+				$this->mDrives_keyName =  'Field' ;
+
 			break;
 			case "ado_mssql":
-				$_sql = "exec sp_columns " . $_table_name;
 			default:
+				$_sql = "exec sp_columns " . $_table_name;
+				$this->mDrives_keyName = 'COLUMN_NAME';
+			
 			break;
 		}
 		$this->mConn->setCxTitle( "cx_db getDescribe: " .$_table_name);
@@ -204,7 +209,7 @@ class cx_db {
 		
 		//exec sp_columns Tb_EndUser
 		$_tb = $this->getDescribe($_table);
-
+//print_cx($_tb);
 		$this->mConn->setCxTitle( "cx_db checkTableArray: " .$_table);
 		// $_sql = "exec sp_columns " . $_table;
 		// $_tb = $this->sqlExec($_sql,array())->getArray();
@@ -212,8 +217,8 @@ class cx_db {
 		$_output_arr = array();
 
 		foreach((array)$_tb as $key => $val){
-			if(array_key_exists($val['COLUMN_NAME'],$_input_arr)){
-				$_output_arr[$val['COLUMN_NAME']] = $_input_arr[$val['COLUMN_NAME']];
+			if(array_key_exists($val[$this->mDrives_keyName],$_input_arr)){
+				$_output_arr[$val[$this->mDrives_keyName]] = $_input_arr[$val[$this->mDrives_keyName]];
 			}
 		}
 
@@ -222,8 +227,8 @@ class cx_db {
 			return false;
 		}
 
-		//print_cx($_output_arr);
-		//exit(0);
+		// print_cx($_output_arr);
+		// exit(0);
 		return $_output_arr;
 	}
 

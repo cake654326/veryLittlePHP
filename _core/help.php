@@ -303,6 +303,68 @@ function pages2( $total_rows, $offset, $limit_row, $url_str='', $class="page", $
     return "<span class=$class>$str2</span>";
 }
 
+function pages_css( $total_rows, $offset, $limit_row, $url_str='', $class="page", $mod="2" ,$_actionClass = '_cx_action' ) {
+    $current_page = ( $offset/$limit_row ) + 1;
+    $total_pages = ceil( $total_rows/$limit_row );
+    if ( $mod == "1" ) {
+        $current_page = ( $offset/$limit_row ) + 1;
+        $total_pages = ceil( $total_rows/$limit_row );
+        $str2 = "";
+        if ( $offset != 0 ) $str2 .="| <a href=\"$PHP_SELF?offset=0&$url_str\" class=\"$class\">FirstPage</a> | ";
+        if ( ( $offset - $limit_row ) >= 0 ) {
+            $prev_offset = $offset - $limit_row;
+            $str2 .= " <a href=\"$PHP_SELF?offset=$prev_offset&$url_str\" class=\"$class\">Previous</a> | ";
+        }
+
+        // $str2 .= " [ $current_page / $total_pages ] ";
+        $str2 .= "<a href='#' class='".$_actionClass."'>  $current_page / $total_pages  </a>";
+        //_actionClass <a href="?page=1" class="current">1</a>
+        $last_row = ( ( $total_pages-1 ) * $limit_row );
+        if ( ( $offset + $limit_row ) < $total_rows ) {
+            $next_offset = $offset + $limit_row;
+            $str2 .= "<a href=\"$PHP_SELF?offset=$next_offset&$url_str\" class=\"$class\">NEXT</a> | ";
+            $str2 .= "<a href=\"$PHP_SELF?offset=$last_row&$url_str\" class=\"$class\">LastPage</a> | ";
+        }
+    }
+    elseif ( $mod == "2" ) {
+
+        $str2 = "";
+        $i = ceil( $current_page / 10 ) - 1 ;
+
+        if ( $i >= 1 ) {
+            $of = max( 0, $offset - ( $limit_row * 10 ) ) ;
+            $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">上10頁</a> ";
+        }
+        $a=min( $total_pages, ( $i*10 )+10 );
+        for ( $i = 1+( $i*10 ); $i <= $a; $i++ ) {
+            $of = $i * $limit_row - $limit_row;
+            if ( $i == $current_page )
+                // $str2.= "[ $i ] ";
+                $str2 .= "<a href='#' class='".$_actionClass."'>  $i  </a>";
+            else
+                $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i</a> ";
+        }
+        if ( $i < $total_pages ) {
+
+            $of = min( $total_rows, $offset + ( $limit_row * 10 ) );
+            $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">下10頁</a>";
+        }
+    }
+    else {
+        $str2 = "Page:";
+        for ( $i =1; $i <= $total_pages; $i++ ) {
+            $of = $i * $limit_row - $limit_row;
+            if ( $i == $current_page )
+                //$str2.= "[ $i ] ";
+                $str2 .= "<a href='#' class='".$_actionClass."'>  $i  </a>";
+            else
+                $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i</a> ";
+        }
+
+    }
+    return "<span class=$class>$str2</span>";
+}
+
 function is_email( $str ) //驗證 E-mail 格式
 {
     if ( ereg( "^[A-Za-z0-9\.\-]+@[A-Za-z0-9]+\.[A-Za-z0-9\.]+$", $str ) ) {
