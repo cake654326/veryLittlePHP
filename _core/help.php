@@ -85,8 +85,8 @@ function _cx_array_to_string( $_arr ) {
     return $att;
 }
 
-function cx_getHtmlTag( $_tag, $_arr, $_val ) {
-    return "<" . $_tag . " " . _cx_array_to_string( $_arr ) . " >" . $_val . "</" . $_tag . ">";
+function cx_getHtmlTag( $_tag, $_arr, $_val ,$_click = '') {
+    return "<" . $_tag . " " . _cx_array_to_string( $_arr ) . " ".$_click.">" . $_val . "</" . $_tag . ">";
 }
 
 function generatorPassword() {

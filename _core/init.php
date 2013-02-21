@@ -42,7 +42,8 @@ require 'form-validation.php';
 include "library/cx_db.php";
 include "library/cx_lib.php";
 include $_path."_data/opensql.php";
-header( "Cache-control:private" );
+// header( "Cache-control:private" );
+global $conn;//cx
 $conn->SetFetchMode( ADODB_FETCH_ASSOC );
 $CONN = &$conn;
 $Core->setConn( $CONN );

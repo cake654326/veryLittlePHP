@@ -26,6 +26,10 @@
 #
 # 2013/01/03 pm14:00 v1.1.6 : [cx] Execute = Add auto message to log file
 #
+# 2013/02/02                : [cx] getArray( $eq ) 直接取得陣列KEY之VALUE，NULL = 得到全部，若無資料則回傳false
+#
+# 2013/02/21                : [cx][未測試] 增加getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
+#
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -40,6 +44,7 @@ class cx_db {
 	var $mWhere;
 	var $mPk;
 	var $mRs;
+	var $mDrives = 'ado_mssql';
 
 	public function __construct( $_conn = null ) {
 		//parent::__construct();
@@ -54,6 +59,10 @@ class cx_db {
 			}
 		}
 		$this->mConn = &$_conn;
+	}
+	public function setDrives($_sqlDrives='ado_mssql'){
+		//or mysql ado_mssql
+		$this->mDrives = $_sqlDrives;
 	}
 
 	public function clear() {
@@ -91,13 +100,18 @@ class cx_db {
 	/**
 	 * 簡化 Adodb  GetArray
 	 * **/
-	public function getArray() {
+	public function getArray( $_eq = null) {
 		//echo "run array()";
 		$_cout = $this->getCout();
 
 		if( !$_cout ) return false;
 		if ( $_cout > 0 ) {
-			return $this->mRs->GetArray();
+			$_mArray = $this->mRs->GetArray();
+			if($_eq !== null){
+				if(!isset( $_mArray[$_eq] ) )return false;
+				return $_mArray[$_eq];
+			}
+			return $_mArray;
 		}
 		if ( $_cout == 0 ) return 0;
 
@@ -162,23 +176,49 @@ class cx_db {
 		return $_rs;
 	}
 
+//mDrives
+	public function getDescribe( $_table_name = null ){
+		/*
+			mssql : exec sp_columns $tablename;
+			mysql : DESCRIBE $tablename;
+		*/
+		$_table_name = ($_table_name === null )?$this->mTable:$_table_name;
+		$_sql '';
+		switch($this->mDrives){
+			case "mysql":
+				$_sql = "exec DESCRIBE " . $_table_name;
+			break;
+			case "ado_mssql":
+				$_sql = "exec sp_columns " . $_table_name;
+			default:
+			break;
+		}
+		$this->mConn->setCxTitle( "cx_db getDescribe: " .$_table_name);
+		
+		return $this->sqlExec($_sql,array())->getArray();
+
+	}
 
 	public function checkTableArray($_table,$_input_arr){
 		// 自動化 ARRAY檢查
+		
 		//exec sp_columns Tb_EndUser
+		$_tb = $this->getDescribe($_table);
+
 		$this->mConn->setCxTitle( "cx_db checkTableArray: " .$_table);
-		$_sql = "exec sp_columns " . $_table;
-		$_tb = $this->sqlExec($_sql,array())->getArray();
+		// $_sql = "exec sp_columns " . $_table;
+		// $_tb = $this->sqlExec($_sql,array())->getArray();
+
 		$_output_arr = array();
 
-		foreach($_tb as $key => $val){
+		foreach((array)$_tb as $key => $val){
 			if(array_key_exists($val['COLUMN_NAME'],$_input_arr)){
 				$_output_arr[$val['COLUMN_NAME']] = $_input_arr[$val['COLUMN_NAME']];
 			}
 		}
 
 		if(count($_output_arr) == 0){
-			error_log("count($_output_arr) is 0", 3, "../_log/db.log");
+			// error_log("count($_output_arr) is 0", 3, "../_log/db.log");
 			return false;
 		}
 

@@ -31,6 +31,10 @@
  * 2013-01/31:
  *          改為自定 POST AND GET TYPE
  *
+ * 2013-02-22:
+ *          public function runValidation( $_server_tag = 'POST' , $_pk = 'input' ) 
+ *          增加規則 對應 rule 或者 input 之陣列
+ *
  * */
 
 class validateForm {
@@ -117,10 +121,12 @@ class validateForm {
 
     /**
      * Runs _runValidation once POST data has been submitted.
+     * _server_tag 方法
+     * $_pk : input | rule 陣列檢查標準
      *
      * @return void
      */
-    public function runValidation( $_server_tag = 'POST' ) {
+    public function runValidation( $_server_tag = 'POST' , $_pk = 'input' ) {
         switch ( $_server_tag ) {
         case "POST":
             $this->mServer = $_POST;
@@ -135,7 +141,7 @@ class validateForm {
             break;
 
         }
-        $this->_runValidation();
+        $this->_runValidation( $_pk );
 
         return $this->_formSuccess;
     }
@@ -144,21 +150,46 @@ class validateForm {
      * Takes and trims each $this->mServer field, if it has any rules, we parse the rule string and run
      * each rule against the $this->mServer value. Sets formSuccess to true if there are no errors
      * afterwards.
+     * pk : input | rule 陣列檢查標準
      */
-    protected function _runValidation() {
+    protected function _runValidation( $_pk = 'input' ) {
 
         $this->_forceFail = false;
         // print_cx($this->mServer);
-        foreach ( $this->mServer as $inputName => $inputVal ) {
-            $this->mServer[$inputName] = trim( $this->mServer[$inputName] );
 
-            if ( array_key_exists( $inputName, $this->_ruleSets ) ) {
+        switch ( $_pk ) {
+        case "rule":
+            foreach ( $this->_ruleSets as $inputName => $_val ) {
+                if ( array_key_exists( $inputName, $this->mServer ) ) {
 
+                }else {
+                    $this->mServer[$inputName] = '';
+                    // echo $inputName . "<br>";
+                }
                 foreach ( $this->_parseRuleString( $this->_ruleSets[$inputName] ) as $eachRule ) {
-                    //echo ".2-" . $eachRule;
-                    $this->_validateRule( $inputName, $this->mServer[$inputName], $eachRule );
+                    $this->_validateRule( $inputName, $this->mServer[$inputName] , $eachRule );
+                }
+
+            }
+            break;
+        case "input":
+        default:
+
+            foreach ( $this->mServer as $inputName => $inputVal ) {
+                $this->mServer[$inputName] = trim( $this->mServer[$inputName] );
+                // print_cx($this->_ruleSets);exit;
+                if ( array_key_exists( $inputName, $this->_ruleSets ) ) {
+
+                    foreach ( $this->_parseRuleString( $this->_ruleSets[$inputName] ) as $eachRule ) {
+                        //echo ".2-" . $eachRule;
+                        $this->_validateRule( $inputName, $this->mServer[$inputName], $eachRule );
+                    }
+
                 }
             }
+
+
+            break;
         }
 
         if ( empty( $this->_errorSet ) && $this->_forceFail === false ) {
@@ -624,7 +655,7 @@ class validateForm {
     //判斷 英數混合
     protected function _validateAlnum( $inputName , $ruleName, array $ruleargs ) {
         $inputVal = $this->post( $inputName );
-        if ( !$this->_cx_checkValue( $inputVal, 3 )) {
+        if ( !$this->_cx_checkValue( $inputVal, 3 ) ) {
             $this->_setError( $inputName, $ruleName, $this->_getLabel( $inputName ) );
 
         }
@@ -643,7 +674,7 @@ class validateForm {
     //判斷sql 危險字元
     protected function _validateSql( $inputName , $ruleName, array $ruleargs ) {
         $inputVal = $this->post( $inputName );
-        if ( !$this->_cx_checkValue( $inputVal, 4 )) {
+        if ( !$this->_cx_checkValue( $inputVal, 4 ) ) {
             // echo "error:" . $inputVal;
             $this->_setError( $inputName, $ruleName, $this->_getLabel( $inputName ) );
 
