@@ -183,7 +183,7 @@ class cx_db {
 			mysql : DESCRIBE $tablename;
 		*/
 		$_table_name = ($_table_name === null )?$this->mTable:$_table_name;
-		$_sql '';
+		$_sql = '';
 		switch($this->mDrives){
 			case "mysql":
 				$_sql = "exec DESCRIBE " . $_table_name;
