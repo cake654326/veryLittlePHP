@@ -14,7 +14,7 @@ class mainController extends baseController
 		//$this->mCore->loadLib( "lib_demo" );
 	}
 
-	public function init() {
+	public function init( $aUrl ) {
 
 	}
 

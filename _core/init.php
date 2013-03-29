@@ -7,6 +7,7 @@
 # 2012/11            v1.1.0 : [cx]相容 傳統寫法專案(v1.1)，不相容 舊版 v1.0框架專案
 # 2012/12/07         v1.2.0 : [cx]增加 MVC 控制器模式
 # 2012/12/22 AM09:15 v1.2.0 : [cx]修正 baseController
+# 2013/02/22 AM10:45 v1.2.0 : [cx]add old php have __dir__ defined value
 # --------------------------------------------------------
 **/
 session_start();
@@ -14,6 +15,14 @@ $_path = "../";
 
 //check MVC and set PATH
 isset( $MVC_PATH ) and $_path = $MVC_PATH;
+
+if(!defined('__DIR__')) { 
+	$_file = __FILE__;
+	$_file = str_replace("\\", "/", __FILE__  );
+	$_iPos = strrpos($_file, "/"); 
+	// echo $_file . " dir:" . substr($_file, 0, $_iPos) . "<br>";
+    define("__DIR__", substr($_file, 0, $_iPos) . "/"); 
+} 
 
 require 'help.php';
 require 'template.php';

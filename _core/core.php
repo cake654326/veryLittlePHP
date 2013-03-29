@@ -107,11 +107,13 @@ class core {
 	}
 
 	public function log(  $_msg , $_file_name = null ,$_path = null ){
+		if(!$this->config('WRITELOG'))return;
 		( $_path == null ) and $_path = "./" . $this->config( 'LOGFILENAME' ) ;
 		( $_file_name == null ) and $_file_name =  $this->config( 'SYSLOGNAME' ) ;
 		$this->mLog->lfile( $_path . '/' . $_file_name );
 		$this->mLog->lwrite($_msg);
 		$this->mLog->lclose();
+
 	}
 
 

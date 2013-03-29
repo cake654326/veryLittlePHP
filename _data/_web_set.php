@@ -13,14 +13,15 @@
 		break;
 	case "ado_mssql";
 		// $myhost		= "XXXXXXXXXXXXXXXX";
-		// $myhost		= "127.16.3.48";
-		// $myuser		= "sa";
-		// $mypassword	= "seat";
-		// $mydatabase	= "framework_db";
-		$myhost		= "172.16.44.208";
+		$myhost		= "172.16.3.48";
 		$myuser		= "sa";
 		$mypassword	= "seat";
-		$mydatabase	= "UnivSelect";
+		$mydatabase	= "framework_db";
+	//------
+		// $myhost		= "172.16.44.208";
+		// $myuser		= "sa";
+		// $mypassword	= "seat";
+		// $mydatabase	= "UnivSelect";
 
 
 		break;

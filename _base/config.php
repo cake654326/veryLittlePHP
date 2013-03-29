@@ -3,6 +3,7 @@
  # 通用 設定檔案
  ***/
 $Core->setConfig('CXDEBUG' ,true);
+$Core->setConfig('WRITELOG' ,true);
 $Core->setConfig('LOGFILENAME' , "_log");//log 系統檔案路徑
 $Core->setConfig('SYSLOGNAME' , "system.log");//log 系統檔案名稱
 
