@@ -73,6 +73,7 @@ class core {
 	var $mMod = array();
 	var $mLib = array();
 	var $mSysLib = array();
+	var $mHelpFunc = array();
 	var $mTpl = null;
 	var $mBaseUrl = null;
 	var $mBackUrl = array(); // 後輟
@@ -84,6 +85,8 @@ class core {
 		//parent::__construct(  );
 		$this->mConfig['sysLib_name'] = "library";
 		$this->mConfig['sysFile_path'] = "";
+		$this->mConfig['sysHelp_path'] = "help";
+
 		$this->mConfig['file_path'] = "../";
 		$this->mConfig['mod_name'] = "_model";
 		$this->mConfig['lib_name'] = "_library";
@@ -192,6 +195,24 @@ class core {
 			//echo $_path;
 			//if( !file_exists($_path) ) return false;
 			array_push( $this->mSysLib, $_name );
+			require $_path;
+			return true;
+		}
+		return false;
+	}
+
+//load help function
+	public function loadHelp( $_name ) {
+		if ( !in_array( $_name, $this->mSysLib ) ) {
+			$_path = $this->config( 'sysFile_path' ).
+				$this->config( 'sysHelp_path' ) .
+				'/'.$_name.'_helper.php';
+				
+			// if( !file_exists($_path) ){
+			// 	//[cx next ]add log
+			// 	return false;
+			// } 
+			array_push( $this->mHelpFunc, $_name );
 			require $_path;
 			return true;
 		}
