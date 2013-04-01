@@ -19,12 +19,13 @@ class demoController extends baseController
       // $CI =& get_instance();
    }
 
-   public function init() {
+   public function init( $_aUrl ) {
 
    }
 
    public function IndexAction( $aUrl ) {
       echo "demo index";
+      $this->mCore->log("test");
    }
 
    public function AddAction( $aUrl ) {
