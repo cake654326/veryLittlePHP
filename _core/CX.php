@@ -83,6 +83,7 @@ class CX {
     protected static function page404( $msg ){
     	$mCore = &self::getCore();
     	//echo "<br> now getcwd: " . getcwd() . "<br>";  
+    	if($mCore->config('404PAGELOG')) $mCore->log($msg);
     	echo $mCore->loadView('./_view/404.php' , array('msg' => $msg) ,true);
     	return ;
     }

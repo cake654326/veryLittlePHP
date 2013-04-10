@@ -82,7 +82,9 @@ class cx_router {
 		//echo "path:" . $_path;
 		$_key = 0;
 		 // print_r($this->aUrl);
+		$_next = null;//next value
 		foreach($this->aUrl as $key => $val){
+			$_next = current($this->aUrl);
 			$this->sAction = "Index";
 			$_key = $key;
 			if($val == ''){
@@ -93,9 +95,22 @@ class cx_router {
 			$__path = $_path . '/' . $val;
 			// echo "<br>path: " . $__path . ":";
 			if(is_dir($__path)){
-				//return $_file;
 				$_path = $__path;
-				//echo "ok <br>";
+				// echo "ok _path" .$_path. "<br>";
+				//下一個序列為空
+				if($_next == null){
+					// echo "ok __path: "  .$__path. "<br>";
+					$_crtl_path = $__path."/indexController.php";
+					// echo "  => _crtl_path:" .$_crtl_path. "<br>";
+					if( file_exists( $_crtl_path ) )
+					{
+						// echo "ok2";
+						// $_path = "indexController.php";
+						$this->sController = "Index";
+						$this->sAction = "Index";
+						$this->sPath = $_crtl_path;
+						
+					}
 				
 			}else{
 				
