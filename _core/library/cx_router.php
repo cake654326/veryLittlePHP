@@ -7,6 +7,7 @@
 # 2012/12/07 AM  :   v1.2.0 : [cx] 啟用
 # 2012/12/22 PM17:59 v1.2.1 : [cx] 增加取得 baseUrl 網址
 # 2012/12/24 PM10:30 v1.2.1 : [cx] aUrl 修正
+# 2013/04/08         v1.2   : [cx] 增加讀取資料架預設導入控制器
 # --------------------------------------------------------
 **/
 class cx_router {
@@ -82,9 +83,12 @@ class cx_router {
 		//echo "path:" . $_path;
 		$_key = 0;
 		 // print_r($this->aUrl);
-		$_next = null;//next value
-		foreach($this->aUrl as $key => $val){
+		$_next = null;//下一個元素
+		foreach($this->aUrl as $key => &$val){
+
 			$_next = current($this->aUrl);
+			// echo "next :" . $_next . "<br>"; 
+
 			$this->sAction = "Index";
 			$_key = $key;
 			if($val == ''){
@@ -95,6 +99,7 @@ class cx_router {
 			$__path = $_path . '/' . $val;
 			// echo "<br>path: " . $__path . ":";
 			if(is_dir($__path)){
+				//return $_file;
 				$_path = $__path;
 				// echo "ok _path" .$_path. "<br>";
 				//下一個序列為空
@@ -111,11 +116,15 @@ class cx_router {
 						$this->sPath = $_crtl_path;
 						
 					}
+				}
 				
 			}else{
-				
-				if(file_exists($__path."Controller.php"))
+				$_crtl_path = $__path."Controller.php";
+				// echo "file:" . $_crtl_path . "<br>";
+				if( file_exists( $_crtl_path ) )
 				{
+					// echo "=> ok";
+					// echo " ,val=>" . $val;
 					$_path = $__path."Controller.php";
 					$this->sController = $val;
 					if( isset($this->aUrl[$key + 1] )){
@@ -125,6 +134,8 @@ class cx_router {
 					}
 					$this->sPath = $_path;
 					break;
+				}else{
+
 				}
 				// echo "bad <br>";
 			}
@@ -174,11 +185,12 @@ class cx_router {
 		 // print_cx($tickets);
 
 		//tickets: Array ( [0] => con1 [1] => val1 [2] => val2 [3] => val3 )
-		//echo "contrl:" . $_controller . " ,action:" . $_action;
+		// echo "contrl:" . $_controller . " ,action:" . $_action;
 
 		$_controller = ( $tickets[0] ) ? strtolower( $tickets[0] ) : 'index';
 		$_action = ( isset( $tickets[1] ) && $tickets[1] ) ? strtolower( $tickets[1] ) : 'index';
-		//echo "contrl:" . $_controller . " ,action:" . $_action;
+		// echo "contrl:" . $_controller . " ,action:" . $_action;
+		// print_cx($tickets);
 
 		return $tickets;
 	}
