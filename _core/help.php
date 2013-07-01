@@ -275,18 +275,24 @@ function pages2( $total_rows, $offset, $limit_row, $url_str='', $class="page", $
             $of = max( 0, $offset - ( $limit_row * 10 ) ) ;
             $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">上10頁</a> ";
         }
+
         $a=min( $total_pages, ( $i*10 )+10 );
+        $_list = array();
         for ( $i = 1+( $i*10 ); $i <= $a; $i++ ) {
             $of = $i * $limit_row - $limit_row;
             if ( $i == $current_page )
                 $str2.= "[ $i ] ";
             else
-                $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i</a> ";
+                $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i "."</a> ";
+            array_push($_list, $of);
         }
-        if ( $i < $total_pages ) {
+        $_first = $_list[0];
+        $_last = end($_list);
 
-            $of = min( $total_rows, $offset + ( $limit_row * 10 ) );
-            $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">下10頁</a>";
+        if ( $i < $total_pages ) {
+            // $of = min( $total_rows, $offset + ( $limit_row * 10 ) );
+            $of = min( $total_rows, $_first + ( $limit_row * 10 ) );
+            $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">下10頁"."</a>";
         }
     }
     else {

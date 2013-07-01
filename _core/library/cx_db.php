@@ -236,22 +236,44 @@ class cx_db {
 		$_table = $this->mTable;
 		$_where = $this->mWhere;
 		$_pk_key = $this->mPk;
+		$kSave_type = '';//設定儲存狀態 UPDATE or INSERT
 
 		// 自動化 ARRAY檢查
 		$_inputarr = $this->checkTableArray($_table,$_input_arr);
 		if(!$_inputarr)return false;
 
 		$this->mConn->setCxTitle( "cx_db save " );
-		if ( $this->selectPkCount( $_table, $_pk_val, $_pk_key ) >0 ) {
-			//updata
-			if ( array_key_exists( $_pk_key, $_inputarr ) ) {
-				unset( $_inputarr[$_pk_key] );
-			}
-			$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "UPDATE", $_where );
-		}else {
+		
+		if( $_pk_val == null){
 			//insert
-			$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "INSERT" );
+			$kSave_type = "INSERT";
+		}else{
+			if ( $this->selectPkCount( $_table, $_pk_val, $_pk_key ) >0 )  {
+				//updata
+				$kSave_type = "UPDATE";
+			}else {
+				//insert
+				$kSave_type = "INSERT";
+			}
 		}
+		
+		switch($kSave_type){
+			case "UPDATE":
+				if ( array_key_exists( $_pk_key, $_inputarr ) ) {
+					unset( $_inputarr[$_pk_key] );
+				}
+				$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "UPDATE", $_where );
+			break;
+			
+			case "INSERT":
+				$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "INSERT" );
+			break;
+			default:
+				$_rs = false;
+			break;
+			
+		}
+		
 		if ( !$_rs )return false;
 		return true;
 
