@@ -879,6 +879,24 @@ function Ln($h=null)
 		$this->y += $h;
 }
 
+function cxImage(&$_OBJ){
+// 	echo "<br>----<br>";
+// 	echo $_OBJ->get('image');
+// 	echo "<br>----<br>";
+// print_cx($_OBJ);
+// exit;
+	return $this
+		->Image(
+			$_OBJ->get('image'),
+			$_OBJ->get('x'),
+			$_OBJ->get('y'),
+			$_OBJ->get('size_w'),
+			$_OBJ->get('size_h'),
+			$_OBJ->get('type'),
+			$_OBJ->get('link')
+			);
+}
+
 function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
 {
 	// Put an image on the page

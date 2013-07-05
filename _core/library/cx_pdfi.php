@@ -56,4 +56,72 @@ class cx_pdfi {
 
 }
 
+class cx_pdfImageText{
+	/**
+		# pdfi
+	**/
+	private $mObjects = array();
+
+	public $mPDFI = null;
+	public $mPDF = null;
+
+	public function __construct( &$_pdfi ) {
+		//default value
+		//$file, $x=null, $y=null, $w=0, $h=0, $type='', $link=''
+		$this->mObjects['name'] = "xxx";
+		$this->mObjects['x'] = 10;
+		$this->mObjects['y'] = 10;
+		$this->mObjects['size_w'] = 45;
+		$this->mObjects['size_h'] = 0;
+		$this->mObjects['type'] = '';
+		$this->mObjects['link'] = '';
+
+		$this->mObjects['text'] = "許公蓋烱測試堃墭爨伃";
+		$this->mObjects['image'] = null;
+		$this->mObjects['height'] = 450;
+		$this->mObjects['width'] = 100;
+		$this->mObjects['fontPath'] = "./_fonts/TW-Kai-98_1.ttf";
+
+		$this->mPDFI = &$_pdfi;
+	}
+
+
+	function set($name, $object) {
+		$this->mObjects[$name] = $object;
+		return $this;
+		}
+
+	function &get($name) {
+		return $this->mObjects[$name];
+	}
+
+	function getAll(){
+		return $this->mObjects;
+	}
+
+	function setImage($_file_path){
+		//"./_public/textImage/"
+		////->set('image',"./_public/textImage/".$_stuNo."_name.png")
+		return $this->set("image" ,$_file_path .  $this->get("name") . ".png" );
+	}
+
+
+	public function createImage(){
+		return
+		$this->mPDFI->createAlphaTextImage(
+			$this->mObjects['text'],
+			$this->mObjects['image'] ,
+			$this->mObjects['height'],
+			$this->mObjects['width'] ,
+			$this->mObjects['fontPath']
+			);
+
+
+		
+	}
+
+
+
+}
+
 ?>
