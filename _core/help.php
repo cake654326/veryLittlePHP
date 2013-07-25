@@ -723,4 +723,41 @@ function getMicrotime() {
     list( $usec, $sec ) = explode( ' ', microtime() );
     return (double)$usec + (double)$sec;
 }
+
+
+
+function cx_getBacktrace($ignore = 2) { 
+    // $trace = ''; 
+    // // print_cx(debug_backtrace());
+    // foreach (debug_backtrace() as $k => $v) { 
+    //     if ($k < $ignore) { 
+    //         continue; 
+    //     } 
+
+    //     array_walk($v['args'], '_cxBacktrace_resetArray'); 
+
+    //     $trace .= '#' . ($k - $ignore) . ' ' . $v['file'] . '(' . $v['line'] . '): ' . (isset($v['class']) ? $v['class'] . '->' : '') . $v['function'] . '(' . implode(', ', $v['args']) . ')' . "\n"; 
+    // } 
+
+    // return $trace; 
+
+
+    $backtracel = "\n";
+    foreach(debug_backtrace() as $k=>$v){
+        if($v['function'] == "include" || $v['function'] == "include_once" || $v['function'] == "require_once" || $v['function'] == "require"){ 
+          $backtracel .= "#".$k." ".$v['function']."(".$v['args'][0].") called at [".$v['file'].":".$v['line']."]\n"; 
+        }else{ 
+            $backtracel .= "#".$k." ".$v['function']."() called at [".$v['file'].":".$v['line']."]\n"; 
+        } 
+    } 
+    return $backtracel;
+
+} 
+
+function _cxBacktrace_resetArray(&$item, $key) 
+{ 
+    $item = var_export($item, true); 
+}
+
+
 ?>

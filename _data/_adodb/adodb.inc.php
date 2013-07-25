@@ -317,6 +317,7 @@
 	var $_logsql = false;
 	
 	
+	//--- cx 
 	var $_cx_title = '';//顯示個人註解 用於 Execute chromephp LOG資料用
 	var $_cx_all_time = 0;//計算全部花費時間
 	var $_cx_sql ='';//當前SQL code
@@ -325,9 +326,12 @@
 	}
 	function getCxTime()
 	{
-		if (defined('CXDEBUG') )
+
+		if ( defined('CXDEBUG') )
 		{
 			if(CXDEBUG == true){
+				global $Core;
+				$Core->debugLog( array("class"=>"dump-clock") , "ADODB SQL 總花費時間", $this->_cx_all_time);
 				ChromePhp::log("ADODB SQL 總花費時間", $this->_cx_all_time);
 			}
 			
@@ -893,6 +897,10 @@
 		if( CXDEBUG == true){
 		$cx_start_time = microtime(true);
 		//echo "test:" . defined('CXDEBUG');
+		global $Core;
+		$Core->debugGroupCollapsed("INFO","ADODB 【" . $this->_cx_title . '】 查詢詳情',0);
+		$Core->debugLog( "INFO" ,"SQL", $sql);
+		
 		ChromePhp::groupCollapsed("ADODB 【" . $this->_cx_title . '】 查詢詳情');
 
 		//ChromePhp::log("cx_start_time", $cx_start_time);
@@ -919,6 +927,9 @@
 			$cx_elapsed_time = round($cx_end_time - $cx_start_time,3);
 		
 			$this->_cx_all_time += $cx_elapsed_time;
+			global $Core;
+			// echo $Core->config("CXDEBUG_VAL");
+			$Core->debugLog( array("class"=>"dump-clock") , "TIME", $cx_elapsed_time);
 			ChromePhp::log("TIME:", $cx_elapsed_time);//round
 		}
 		
@@ -938,7 +949,12 @@
 	if (defined('CXDEBUG') )
 	{
 		if(CXDEBUG == true){
+			header("Content-Type:text/html; charset=utf-8");
+			global $Core;
+			$Core->debugLog( "ERROR" , "錯誤訊息", $this->ErrorMsg() ,5);
+			$Core->debugLog( "ERROR" , "Backtrace", new cx_Exception( "ERROR","Backtrace",2) ,5);
 			ChromePhp::error("ErrorMsg: ", $this->ErrorMsg());//round
+			$Core->debugGroupEnd();
 		}
 		
 	}	
@@ -948,12 +964,15 @@
 if (defined('CXDEBUG') )
 	{
 		if(CXDEBUG == true){
+
+			global $Core;
+			$Core->debugGroupEnd();
 			ChromePhp::groupEnd();
 		}
 		
 	}		
 		if ($this->_queryID === true) { // return simplified recordset for inserts/updates/deletes with lower overhead
-			$rs =& new ADORecordSet_empty();
+			$rs = new ADORecordSet_empty();
 			return $rs;
 		}
 		
@@ -1921,7 +1940,7 @@ if (defined('CXDEBUG') )
 		
 		if (empty($this->_metars)) {
 			$rsclass = $this->rsPrefix.$this->databaseType;
-			$this->_metars =& new $rsclass(false,$this->fetchMode); 
+			$this->_metars = new $rsclass(false,$this->fetchMode); 
 		}
 		
 		return $this->_metars->MetaType($t,$len,$fieldobj);

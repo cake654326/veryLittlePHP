@@ -12,6 +12,7 @@ class mainController extends baseController
 	public function __construct( $_core ) {
 		parent::__construct( $_core );
 		//$this->mCore->loadLib( "lib_demo" );
+		$this->showDebug(true);
 	}
 
 	public function init( $aUrl ) {
@@ -38,14 +39,37 @@ class mainController extends baseController
 		// $_demo = new lib_demo();
 		// $_demo->test();
 
+		echo 'cake';
+
 		$this->mCore->loadLib("lib_demo" , true , "demo");
 		$this->mCore->demo->test();
+
+		$mDb = new cx_db();
+		$mDb->setTitle( "資料庫測試連接 TEMP " );
+		$_sql = "select * from temp";
+		$mDb->sqlExec($_sql,array() );
+
+
+
+//---test
+$_war = array("aaa"=>"bbb","bbb"=>"ccc");
+$this->mCore->debugGroupCollapsed("WARNING","測試參數",0);
+$this->mCore->debugLog( "WARNING" ,"測試1", $_war );
+$this->mCore->debugLog( "INFO" ,"測試2", $_war );
+$_aTest = array();
+$_aTest['cxSql;[save]SQL'] = "SELECT * FROM test WHERE id = 1 LIMIT 1 OFFSET 0;";
+$_aTest['訊息'] = "is bad sql code";
+$_aTest['error'] = new cx_Exception( "ERROR","Backtrace",2);
+$this->mCore->debugLog( "ERROR" ,"測試3", "abc");
+$this->mCore->debugLog( array("class"=>"dump-clock") , "SERVER", $_SERVER);
+$this->mCore->debugGroupEnd(); 
 
 
 
 		$aView = array();
 		$aView['vLeft'] = $this->mCore->loadView( './_view/cxsystem/vLeft.php', array() , true );
 		echo $this->mCore->loadView( './_view/cxsystem/base.php', $aView , true );
+		// echo $this->mCore->cxDebugView();
 	}
 
 }

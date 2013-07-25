@@ -11,7 +11,10 @@
 # --------------------------------------------------------
 **/
 session_start();
-$_path = "../";
+
+global $_path;
+if($_path == '' or $_path == null)
+	$_path = "../";
 
 //check MVC and set PATH
 isset( $MVC_PATH ) and $_path = $MVC_PATH;
@@ -28,14 +31,30 @@ require 'help.php';
 require 'template.php';
 require 'core.php';
 require 'baseController.php';
+require 'cx_Exception.php';//尚未建立 例外處理
 $Core = new core();
 $Core->init();
 $Core->mConfig['file_path'] = $_path;
 require $_path.'_base/config.php';
-ini_set( 'session.gc_maxlifetime', $Core->config( 'gc_maxlifetime' ) );
+
 define( 'BASEPATH', $Core->config( 'BASEPATH' ) );
-define( 'CXDEBUG', $Core->config( 'CXDEBUG' ) );
+
+//--強制開啟 debug 模式
+if($_GET[$Core->config( 'CXDEBUG_KEY' )] == $Core->config( 'CXDEBUG_VAL' ) ){
+	$_bDebug = $Core->config( 'CXDEBUG' );
+	$_ip = $_SERVER['REMOTE_ADDR'];
+	foreach($Core->config( 'CXDEBUG_IPs' ) as $_val ){
+		if(preg_match("/".$_val."/", $_ip))
+			$_bDebug = true;
+	}
+	define( 'CXDEBUG', $_bDebug );
+}else{
+	define( 'CXDEBUG', $Core->config( 'CXDEBUG' ) );
+}
+
 if ( $Core->config( 'CXDEBUG' ) ) {
+	
+
 	require 'ChromePhp.php';
 	ChromePhp::groupCollapsed( '[CX_Init] $_SESSION ' );
 	ChromePhp::log( $_SESSION );
@@ -46,7 +65,11 @@ if ( $Core->config( 'CXDEBUG' ) ) {
 	ChromePhp::groupCollapsed( '[CX_Init] $_GET ' );
 	ChromePhp::log( $_GET );
 	ChromePhp::groupEnd();
+	// require 'library/dump/iDump.php';
+
 }
+
+
 require 'form-validation.php';
 include "library/cx_db.php";
 include "library/cx_lib.php";
@@ -98,6 +121,10 @@ function __autoload($class_name)
 
 //CX.php 為MVC模式物件 
 require 'CX.php';
+
+
+
+
 
 
 ?>

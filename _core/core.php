@@ -66,20 +66,28 @@
 # --------------------------------------------------------
 **/
 class core {
-	var $mConfig = array();
-	var $mConn = null;
-	var $mPost =array();
-	var $mGet = array();
-	var $mMod = array();
-	var $mLib = array();
-	var $mSysLib = array();
+	var $mConfig   = array();
+	var $mConn     = null;//即將廢除
+	var $mAdodb    = null;//將取代 mConn
+	var $mPost     =array();
+	var $mGet      = array();
+	var $mMod      = array();
+	var $mLib      = array();
+	var $mSysLib   = array();
 	var $mHelpFunc = array();
-	var $mTpl = null;
-	var $mBaseUrl = null;
-	var $mBackUrl = array(); // 後輟
-	var $mLog = null;
+	var $mTpl      = null;
+	var $mBaseUrl  = null;
+	var $mBackUrl  = array(); // 後輟
+	var $mLog      = null;
 
 	var $mLayout = array(); //[實驗] !* 未定 載入LAYOUT樣板
+
+	var $mException = array();//[實驗] 例外處理
+
+	var $aDebugLog = array();//[實驗] DEBUG訊息
+
+	var $sDebugLog = '';//[實驗] 暫存DEBUG訊息
+
 
 	public function __construct(  ) {
 		//parent::__construct(  );
@@ -109,14 +117,27 @@ class core {
 		return $this;
 	}
 
-	public function log(  $_msg , $_file_name = null ,$_path = null ){
+
+
+	/**
+	 * 系統 log 檔
+	 **/
+	public function systemLog( $_msg ){
 		if(!$this->config('WRITELOG'))return;
+		$this->log( $_msg , $this->config( 'SYSLOGNAME' ) ."_".date( 'Ymd' ).".log" );
+	}
+
+	/*
+	 * log 寫入函數
+	 **/
+	public function log(  $_msg , $_file_name = null ,$_path = null ){
+		// if(!$this->config('WRITELOG'))return;
 		( $_path == null ) and $_path = "./" . $this->config( 'LOGFILENAME' ) ;
 		if( !file_exists($_path) ){
 			// echo "don't have";
 			mkdir($_path, 0777);
 		}
-		( $_file_name == null ) and $_file_name =  $this->config( 'SYSLOGNAME' ) ;
+		( $_file_name == null ) and $_file_name =  $this->config( 'SYSLOGNAME' ) . ".log" ;
 
 		$this->mLog->lfile( $_path . '/' . $_file_name );
 		$this->mLog->lwrite($_msg);
@@ -191,12 +212,13 @@ class core {
 		return false;
 	}
 
-
 	public function loadSysLib( $_name ) {
 		if ( !in_array( $_name, $this->mSysLib ) ) {
 			$_path = $this->config( 'sysFile_path' ).
 				$this->config( 'sysLib_name' ) .
 				'/'.$_name.'.php';
+			
+			// print_cx($this->sendException());
 			//echo $_path;
 			//if( !file_exists($_path) ) return false;
 			array_push( $this->mSysLib, $_name );
@@ -238,7 +260,11 @@ class core {
 
 	private function _cx_load_class($_type , $_path ,$_library, $_autoSet = false ,
 									 $_object_name = null ,$_params = null){
-		if( !file_exists($_path) ) return false;
+
+		if( !file_exists($_path) ){
+			$this->cxException("WARNING","_cx_load_class","don't find " . $_path . " ");
+			return false;
+		} 
 		array_push( $this->$_type, $_library );
 		require $_path;
 		if($_autoSet){
@@ -267,7 +293,12 @@ class core {
 	}
 
 	public function config( $_key ) {
-		return $this->mConfig[$_key];
+
+		if( array_key_exists($_key, $this->mConfig) ){
+			return $this->mConfig[$_key];
+		}
+
+		return null;
 	}
 
 	public function checkPost() {
@@ -340,6 +371,179 @@ class core {
 		}
 		return false;
 	}
+
+
+
+	private $sDebugLevel;
+	private $sDebugTitle;
+	private $bEnableDebug = false;
+
+	public function loadDebugInit(){
+		if( !$this->config( 'CXDEBUG' ) ) return $this;
+		if( $this->bEnableDebug ) return $this;
+		require 'library/dump/Dump.php';
+		// $this->config( 'CXDUMP' , true );
+		// define( 'CXDUMP', true );
+		require 'cxHeader.php';
+		global $_path;
+		global $MVC_PATH;
+		$_nPath = $_path;
+		isset( $MVC_PATH ) and $_nPath = $this->getUrl();
+		// echo "<br>cake:" . $_nPath;
+		// echo "<br>" ;
+		Dump::config($_nPath.'_core/library/dump/dump-static', array(
+    	        'APP_PATH' => $_nPath
+    	            )
+    	    );
+		$this->debugGroupCollapsed("INFO","基本參數",0);
+		$this->debugLog( "INFO" , "SERVER", $_SERVER);
+		$this->debugLog( "INFO" ,"CONFIG", $this->mConfig );
+		$this->debugLog( "INFO" ,"SYSLIB", $this->mSysLib );
+		$this->debugLog( "INFO" ,"SESSION", $_SESSION );
+		$this->debugLog( "INFO" ,"POST", $_POST );
+		$this->debugLog( "INFO" ,"GET", $_GET );
+		$this->debugGroupEnd();	
+		$this->bEnableDebug = true;
+		return $this;
+	}
+
+	public function debugGroupCollapsed( $_type , $_title , $_iMainLevel = null ){
+		// if ( !defined('CXDUMP') ) return $this;
+		// if( !$this->config( 'CXDUMP' ) ) return $this;
+		if( !$this->config( 'CXDEBUG' ) ) return $this;
+		if( $_iMainLevel != null){
+			$this->sDebugLevel = $_iMainLevel;
+		}else{
+			$this->sDebugLevel = $_type;
+		}
+		// $this->sDebugTitle = $this->_debugStyle($_type ,$_title);
+		$this->sDebugTitle = $_title;
+		$this->aDebugLog = array();
+		return $this;
+	}
+
+	public function debugLog( $_type ,$_title, $_val , $_iMainLevel=null){
+// echo "debugLog";
+		// if ( !defined('CXDUMP') ) return $this;
+		// if( !$this->config( 'CXDUMP' ) ) return $this;
+		if( !$this->config( 'CXDEBUG' ) ) return $this;
+		($_iMainLevel != null) and $this->sDebugLevel = $_iMainLevel;
+		$_class = null;
+		$_sType = '';
+		if(is_array($_type)){
+			$_sType = "OTHER";
+			$_class = $_type['class'];
+		}else{
+			$_sType = $_type;
+		}
+
+		$_title_val = $this->_debugStyle($_sType ,$_title,$_class);
+		$this->aDebugLog[$_title_val] = $_val ;
+		return $this;
+	}
+
+	public function debugGroupEnd(){
+// echo "debugGroupEnd";
+		// if ( !defined('CXDUMP') ) return $this;
+		// if( !$this->config( 'CXDUMP' ) ) return $this;
+		if( !$this->config( 'CXDEBUG' ) ) return $this;
+		$_title = $this->_debugStyle($this->sDebugLevel ,$this->sDebugTitle);
+		$_gVal = dump_render_array($_title ,$this->aDebugLog);
+		return $this->cxException($this->sDebugLevel  , $_gVal);
+	}
+
+	public function cxDebugView(){
+// echo "cxDebugView";	
+		// if ( !defined('CXDUMP') ) return null;
+		// if( !$this->config( 'CXDUMP' ) ) return null;
+		if( !$this->config( 'CXDEBUG' ) ) return null;
+		$_debugView = '';
+		foreach($this->mException as $_val){
+			$_debugView .= $_val;
+		}
+		$_debugView .= dump_render_array("-------- END --------",array());
+		return $_debugView;
+	}
+
+	public function debugMsg($_code , $_type, $_e ){
+		// if( !$this->config( 'CXDEBUG' ) ) return $this;
+		// return cxException($_code , $_type, $_e );
+	}
+
+	function _debugStyle($_type , $_title,$_class = null){
+		$_val = '';
+		switch ($_type) {
+			case '0':
+			case 'INFO':
+				$_val = 'cxHtml;';
+				$_val .="<span class='dump-cxInfo'>".$_title."</span>";
+				break;
+			case '3':
+			case 'WARNING':
+				$_val = 'cxHtml;';
+				$_val .="<span class='dump-warning'>".$_title."</span>";
+				break;
+			case '4':
+			case '5':
+			case 'ERROR':
+				$_val = 'cxHtml;';
+				$_val .="<span class='dump-error'>".$_title."</span>";
+				break;
+			case '-1':
+			case "OTHER":
+				$_val = 'cxHtml;';
+				$_val .="<span class='".$_class."'>".$_title."</span>";
+				break;
+			break;
+			default:
+				$_val = $_title;
+				break;
+		}
+		return $_val;
+	}
+
+
+	function cxException($_level , $_val ){
+		// if ( defined('CXDUMP') ) return $this;
+		// if( !$this->config( 'CXDUMP' ) ) return $this;
+		if( !$this->config( 'CXDEBUG' ) ) return $this;
+			// $this->setException( $_type , $_e);
+		// echo $_level;
+		array_push($this->mException, $_val);
+		switch($_level){
+			case '5':
+			// case "FATAL":
+				echo "FATAL ERROR!";
+				// echo $_val;
+				echo $this->cxDebugView();
+				exit();
+			break;
+
+			case '4':
+			// case "ERROR":
+				//echo "cxERROR Error:" ;
+				// exit();
+			break;
+
+			case '3':
+			// case "WARNING":
+
+			break;
+
+			case '1':
+			case '0':
+			default:
+			// case "INFO":
+
+			break;
+
+		}
+
+
+		return $this;
+
+	}
+
 
 
 

@@ -22,7 +22,7 @@ class CX {
 
 	public static function run(){
 		global $MVC_PATH; 
-		$mCore = &self::getCore();
+		$mCore = self::getCore();
 		$mCore->loadSysLib("cx_router");
 
 		$_host = ( !$mCore->config("base_host" ) )?null:$mCore->config("base_host" );
@@ -43,11 +43,16 @@ class CX {
 			header("Location: "  ."./index.php" .$_base_ctrl );
 			exit;
 		}
+		$mCore->loadDebugInit();//啟用 debug
 		$mCTRL = self::_getController( $_path , $_router->getControllerName()  );
 
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
 		$mCTRL->init(  $_router->aData );//load init()
-		return $mCTRL->{$sAction}($_router->aData);
+		$_returnData = $mCTRL->{$sAction}($_router->aData);
+		if($mCTRL->showDebug()) 
+			echo $mCore->cxDebugView();//debug view
+
+		return $_returnData;
 
 	}
 
@@ -55,7 +60,7 @@ class CX {
 	protected static function _getController($_path,$_controller )
     {
 
-    	$mCore = &self::getCore();
+    	$mCore = self::getCore();
          $userNamespace = '';//My_
         // if (array_key_exists('userNamespace', $this->_config['bootstrap'])) {
         //     $userNamespace = rtrim(ucfirst($this->_config['bootstrap']['userNamespace']), '_') . '_';
@@ -81,7 +86,7 @@ class CX {
     }
 
     protected static function page404( $msg ){
-    	$mCore = &self::getCore();
+    	$mCore = self::getCore();
     	//echo "<br> now getcwd: " . getcwd() . "<br>";  
     	if($mCore->config('404PAGELOG')) $mCore->log($msg);
     	echo $mCore->loadView('./_view/404.php' , array('msg' => $msg) ,true);

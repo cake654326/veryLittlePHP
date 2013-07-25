@@ -52,7 +52,7 @@ class cx_db {
 		if($_conn == null){
 			global $Core;
 			if($Core){
-				$_conn = &$Core->getDB();
+				$_conn = $Core->getDB();
 				$this->mCore = &$Core;
 			}else{
 				$_msg = "ERROR:[cx_db] don't have Core OR __construct( $_conn ) val adodb loading";
@@ -137,7 +137,11 @@ class cx_db {
 		if ( !$this->mRs  ) {
 			$_error = $this->getError();
 			$_msg = "CX_DB Execute Error:" . $_error ;
-			$this->mCore->log( $_msg ); //bug
+
+			//show log
+			$this->mCore->log( $_msg , "DB_".date( 'YmdH' ).".txt" ); //bug
+			$this->mCore->systemLog( $_msg  );
+
 			$this->setTitle( $_msg );
 			return false;
 		}

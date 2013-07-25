@@ -1,0 +1,117 @@
+
+
+body {
+	background-image: url('./images/wood_pattern.png');
+	padding-top: 60px;
+	padding-bottom: 40px;
+
+	/*TOP 頂至
+	padding-top: 60px;
+      padding-bottom: 40px;
+      */
+}
+
+.sidebar-nav {
+	/*TOP 頂至
+	padding: 9px 0;
+	*/
+
+}
+
+.navbar-inner{
+  background-image: url('./images/wild_oliva.png');
+  background-repeat: repeat-x;
+}
+
+.sidebar-nav {
+	background-image: url('./images/brushed_alu.png');
+	padding: 0px 0px 0xp 0px;
+	margin-right: -5px;
+	margin-left: -14px;
+}
+
+.well_ground_1{
+	background-image: url('./images/brushed_alu.png');
+}
+
+.cx_right_tasks1{
+padding-left: -10px;
+margin-left: -3px;
+z-index: -11;
+margin-top: 10px;
+position: relative;
+}
+
+.cx_left_tasks1{
+margin-left: 0;
+z-index: 30;
+position: relative;
+}
+
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+.container-fluid {
+    margin: 0px auto;
+    height: 95%;
+    padding: 0px 0px;
+ 
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.columns {
+    /*background-color: #C9E6FF;*/
+    height: 95%;
+   
+}
+.content-area, .article-tree{
+    /*background: #bada55;*/
+    overflow:auto;
+    /*  hidden  auto  */
+    height: 95%;
+}
+.footer {
+  background: red;
+  height: 20px;
+}
+
+
+.nano_left{
+	position:relative; 
+	/*width:100%;*/
+	height:98%; 
+	overflow:auto; 
+	background-image: url('./images/brushed_alu.png'); 
+	-webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
+	-moz-box-shadow: 4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+    -webkit-box-shadow: 4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+    box-shadow: 4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+}
+
+.nano_right{
+	position:relative; 
+	/*width:100%;*/
+	height:98%; 
+	overflow:auto; 
+	/*background-image: url('./images/brushed_alu.png'); */
+	-webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
+}
+
+.nano_top{
+	/*position:relative; */
+	position:fixed;
+	width:350px;
+	z-index:150;
+	height:70%; 
+	overflow:auto; 
+	background-image: url('./images/brushed_alu.png'); 
+	-webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box;
+	-moz-box-shadow: 4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+    -webkit-box-shadow: 4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+    box-shadow: 4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+}
