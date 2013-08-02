@@ -448,7 +448,7 @@ class core {
 		// if( !$this->config( 'CXDUMP' ) ) return $this;
 		if( !$this->config( 'CXDEBUG' ) ) return $this;
 		$_title = $this->_debugStyle($this->sDebugLevel ,$this->sDebugTitle);
-		$_gVal = dump_render_array($_title ,$this->aDebugLog);
+		$_gVal = $this->cxDump_render_array($_title ,$this->aDebugLog);
 		return $this->cxException($this->sDebugLevel  , $_gVal);
 	}
 
@@ -461,8 +461,15 @@ class core {
 		foreach($this->mException as $_val){
 			$_debugView .= $_val;
 		}
-		$_debugView .= dump_render_array("-------- END --------",array());
+		$_debugView .= $this->cxDump_render_array("-------- END --------",array());
 		return $_debugView;
+	}
+
+	public function cxDump_render_array($_str , $_arr = array() ){
+		if (function_exists('dump_render_array')) {
+			return dump_render_array($_str,$_arr);
+		}
+		return $_str;
 	}
 
 	public function debugMsg($_code , $_type, $_e ){
