@@ -5,7 +5,7 @@
  * @author      Cake X
  * @link        https://github.com/cake654326/veryLittlePHP
  * @mail        c782172004@gmail.com
- * @version     1.2
+ * @version     1.3
  *
  * ------------------------------------------------------------------------
  *
@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * ------------------------------------------------------------------------
- * Summary:(google Translation)
+ * Summary:
  * This is a small framework to support the "ADODB",
  * The ADODB tools provide simplified, and a simple template,
  * As well as to solve the traditional wording contains MVC,
@@ -38,7 +38,14 @@
  *			+ 傳統 MVC 入口點 index.php 
  *			+ 增加 router 網址解析 
  *			+ 增加 _controllers 放置區
- *			+ 相容之前非使用 入口點 專案(v1.1) 以及 傳統寫法專案(v1.1)，不相容 舊版 v1.0框架專案
+ *			+ 相容之前非使用 入口點 專案(v1.1) 以及 傳統寫法專案(v1.1)
+                ，不相容 舊版 v1.0框架專案
  *			+ _base/mvc_init.php 為 index.php 初始加載
- * 
+ *
+ * 2013 08 05  - v1.3
+ *          + 初步相容 PHP 5.4
+ *          + 增加 debug view 功能
+ *          + 整合 PDF 庫
+ *          + ADODB 版本升級
+ *          + chromePhp 版本升級
  ***/
