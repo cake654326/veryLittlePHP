@@ -15,7 +15,8 @@
 # 2013/01/09 PM04:06 v1.2.3 : [cx] 增加 _cx_init_object , _cx_load_class 提供載入物件並建立
 # 2013/01/09 PM04:06 v1.2.3 : [cx] 更新 loadLib ,向下相容 提供自動初始化
 # 2013/01/10 AM11:02 v1.2.3 : [cx] 更新 loadMod ,向下相容 提供自動初始化
-#
+# 2013/07/   AM  :   v1.3.0 : [cx] 修正許多BUG
+# 
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -63,9 +64,17 @@
 #@取得POST資料
 # Post() 
 #
+#@取得GET/POST資料，未來將會取代 Get()/Post() 函數
+# _Get/_Post($str = null,$_addslashes = true)
+#	@ $str 			$_GET/_POST KEY名稱，若為null 則回傳Get/Post全部資料 return[array]
+#	@ $_addslashes 	TRUE 為資料啟用跳脫
+#	@[return]		指定KEY資料 或 GET全部資料
+#
+#
 # --------------------------------------------------------
 **/
 class core {
+	var $version   = "1.3.0";
 	var $mConfig   = array();
 	var $mConn     = null;//即將廢除
 	var $mAdodb    = null;//將取代 mConn
@@ -117,7 +126,9 @@ class core {
 		return $this;
 	}
 
-
+	public function version(){
+		return $this->version;
+	}
 
 	/**
 	 * 系統 log 檔
@@ -298,8 +309,6 @@ class core {
 		return $val;
 	}
 	
-	
-
 	public function setConn( $_conn ) {
 		$this->mConn = &$_conn;
 	}
