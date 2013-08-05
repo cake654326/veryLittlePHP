@@ -279,6 +279,26 @@ class core {
 	public function Get() {
 		return $this->mGet;
 	}
+	public function _Get($str = null,$_addslashes = true){
+		$_base_arr = ($_addslashes == true)?$this->mGet:$_GET;
+		if($str == null){
+			return $_base_arr;
+		}
+		return $this->checkIndex($_base_arr,$str);
+	}
+	public function _Post($str = null,$_addslashes = true){
+		$_base_arr = ($_addslashes == true)?$this->mPost:$_POST;
+		if($str == null){
+			return $_base_arr;
+		}
+		return $this->checkIndex($_base_arr,$str);
+	}
+	public function checkIndex($_arr , $_index){
+		$val = !empty($_arr[$_index]) ? $_arr[$_index] : null;
+		return $val;
+	}
+	
+	
 
 	public function setConn( $_conn ) {
 		$this->mConn = &$_conn;

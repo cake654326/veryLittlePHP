@@ -10,7 +10,8 @@
 	case "access";
 		$dsn 	= "Driver={Microsoft Access Driver (*.mdb)};Dbq=".$DBPath.";Uid=;Pwd=;";
 		$conn	= ADONewConnection($my_DB);
-		$conn->charPage=CP_UTF8;
+		//$conn->charPage=CP_UTF8;
+		$conn->charPage =65001;
 		$conn->PConnect($dsn);
 		break;
 	case "ado_mssql";
@@ -28,7 +29,8 @@
 		break;
 	case "mysql";
 		$conn	= ADONewConnection($my_DB);
-		$conn->charPage=CP_UTF8;
+		//$conn->charPage=CP_UTF8;
+		$conn->charPage =65001;
 		$conn->PConnect($myhost, $myuser, $mypassword, $mydatabase );
 		break;
 	}	

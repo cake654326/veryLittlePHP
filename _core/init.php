@@ -39,18 +39,19 @@ require $_path.'_base/config.php';
 
 define( 'BASEPATH', $Core->config( 'BASEPATH' ) );
 
-//--強制開啟 debug 模式
-if($_GET[$Core->config( 'CXDEBUG_KEY' )] == $Core->config( 'CXDEBUG_VAL' ) ){
-	$_bDebug = $Core->config( 'CXDEBUG' );
-	$_ip = $_SERVER['REMOTE_ADDR'];
-	foreach($Core->config( 'CXDEBUG_IPs' ) as $_val ){
-		if(preg_match("/".$_val."/", $_ip))
-			$_bDebug = true;
+$_bDebug = $Core->config( 'CXDEBUG' );
+//--強制開啟 debug 模式[_GET[$CXDEBUG_KEY] == $CXDEBUG_VAL]
+if( $Core->_GET( $Core->config( 'CXDEBUG_KEY' ) ) != null){
+	if( $_GET[$Core->config( 'CXDEBUG_KEY' )] == $Core->config( 'CXDEBUG_VAL' ) ){
+		$_bDebug = true;
 	}
-	define( 'CXDEBUG', $_bDebug );
-}else{
-	define( 'CXDEBUG', $Core->config( 'CXDEBUG' ) );
 }
+$_ip = $_SERVER['REMOTE_ADDR'];
+foreach($Core->config( 'CXDEBUG_IPs' ) as $_val ){
+	if(preg_match("/".$_val."/", $_ip))
+		$_bDebug = true;
+}
+define( 'CXDEBUG', $_bDebug );
 
 if ( $Core->config( 'CXDEBUG' ) ) {
 	
