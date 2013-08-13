@@ -3,7 +3,7 @@
 # core.php
 #@author      Cake X 
 #@link
-#@version     DB v1.1.6
+#@version     DB v1.2.1
 #
 # ADODB 常用以及簡化工具組
 # --------------------------------------------------------
@@ -172,12 +172,12 @@ class cx_db {
 	/**
 	 * 簡化 SAVE 函數 ，采用固定PK 和 WHERE 固定為pK數值為條件。
 	 ***/
-	public function autoSave($_table,$_pk,$_data){
+	public function autoSave($_table,$_pk,$_data,$_set_type = 'AUTO'){
 		$this->mConn->setCxTitle( "cx_db autoSave: " .$_table );
 		$_rs = $this->setTable( $_table )
 					->setPk( $_pk )
 					->updateWhere( $_pk."='" . $_data[$_pk] . "'")
-					->save( $_data , $_data[$_pk]);
+					->save( $_data , $_data[$_pk],$_set_type);
 		return $_rs;
 	}
 
@@ -236,7 +236,13 @@ class cx_db {
 		return $_output_arr;
 	}
 
-	public function save( $_input_arr , $_pk_val ) {
+
+
+	/*
+	強制設定
+	$_type: AUTO , INSERT , UPDATE
+	*/
+	public function save( $_input_arr , $_pk_val ,$_set_type = 'AUTO' ) {
 		$_table = $this->mTable;
 		$_where = $this->mWhere;
 		$_pk_key = $this->mPk;
@@ -258,6 +264,12 @@ class cx_db {
 			}else {
 				//insert
 				$kSave_type = "INSERT";
+			}
+		}
+
+		if($_set_type != 'AUTO'){
+			if($_set_type != $kSave_type){
+				$kSave_type = '';
 			}
 		}
 		
