@@ -1,9 +1,9 @@
 <?php
 /**
-# core.php
+# cx_db.php
 #@author      Cake X 
 #@link
-#@version     DB v1.2.1
+#@version     DB v1.2.3
 #
 # ADODB 常用以及簡化工具組
 # --------------------------------------------------------
@@ -28,8 +28,12 @@
 #
 # 2013/02/02                : [cx] getArray( $eq ) 直接取得陣列KEY之VALUE，NULL = 得到全部，若無資料則回傳false
 #
-# 2013/02/21                : [cx][未測試] 增加 getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
+# 2013/02/21                : [cx]增加 getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
 #
+# 2013/08/13         v1.2.1 : [cx]  autoSave ,save 增加 狀態限制(INSERT,UPDATE,AUTO)
+#
+# 2013/08/14         v1.2.3 : [cx]  修正getCount 函數名稱
+									增加重構selectLimit() 函數
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -92,6 +96,13 @@ class cx_db {
 	 * 取得資料數量 簡化 adodb 函數名
 	 * */
 	public function getCout() {
+		// 函數名錯誤
+		//echo "c:" . $this->mRs->RecordCount();
+		if( !$this->mRs ) return false;
+
+		return $this->mRs->RecordCount();
+	}
+	public function getCount() {
 		//echo "c:" . $this->mRs->RecordCount();
 		if( !$this->mRs ) return false;
 
@@ -103,7 +114,7 @@ class cx_db {
 	 * **/
 	public function getArray( $_eq = null) {
 		//echo "run array()";
-		$_cout = $this->getCout();
+		$_cout = $this->getCount();
 
 		if( !$_cout ) return false;
 		if ( $_cout > 0 ) {
@@ -293,6 +304,19 @@ class cx_db {
 		if ( !$_rs )return false;
 		return true;
 
+	}
+
+	/***
+	 * selectLimit($_sql , $_numlist, $_offset )
+	 * 分頁工具
+	 * @_sql 
+	 * @_numlist  一頁顯示筆數
+	 * @_offset   筆數開頭
+	 */
+	public function selectLimit($_sql , $_numlist, $_offset ,$_arr = array() ){
+		$this->mRs  = $this->mConn->SelectLimit( $_sql, $_numlist, $_offset ,$_arr );
+		if( !$this->mRs ) return false;
+		return $this->getArray();
 	}
 
 }

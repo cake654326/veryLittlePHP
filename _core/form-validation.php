@@ -6,7 +6,7 @@
  * @package     Cake-Form-Validation
  * @author      Cake X
  * @link        https://github.com/cake654326/veryLittlePHP.git
- * @version     0.5
+ * @version     0.6
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
  *          public function runValidation( $_server_tag = 'POST' , $_pk = 'input' ) 
  *          增加規則 對應 rule 或者 input 之陣列
  *
+ * 2013-08-14:
+ *          runValidation(_server_tag,_pk,_checkArray) 增加自定義功能 _server_tag 方法 POST or GET or DEFINDED 
  * */
 
 class validateForm {
@@ -121,12 +123,12 @@ class validateForm {
 
     /**
      * Runs _runValidation once POST data has been submitted.
-     * _server_tag 方法
+     * _server_tag 方法 POST or GET or DEFINDED
      * $_pk : input | rule 陣列檢查標準
-     *
+     * 
      * @return void
      */
-    public function runValidation( $_server_tag = 'POST' , $_pk = 'input' ) {
+    public function runValidation( $_server_tag = 'POST' , $_pk = 'input' ,$_checkArray = array() ) {
         switch ( $_server_tag ) {
         case "POST":
             $this->mServer = $_POST;
@@ -135,6 +137,9 @@ class validateForm {
             $this->mServer = $_GET;
             // print_cx($_GET);
             break;
+        case "DEFINDED":
+            $this->mServer = $_checkArray;
+        break;
         default:
             $this->_formSuccess = true;
             return;
