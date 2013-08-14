@@ -36,7 +36,8 @@
  *          增加規則 對應 rule 或者 input 之陣列
  *
  * 2013-08-14:
- *          runValidation(_server_tag,_pk,_checkArray) 增加自定義功能 _server_tag 方法 POST or GET or DEFINDED 
+ *          runValidation(_server_tag,_pk,_checkArray) 
+*              增加自定義功能 _server_tag 方法 POST or GET or DEFINDED|ARRAY 
  * */
 
 class validateForm {
@@ -137,7 +138,9 @@ class validateForm {
             $this->mServer = $_GET;
             // print_cx($_GET);
             break;
+        case "ARRAY":
         case "DEFINDED":
+        // print_cx($_checkArray);
             $this->mServer = $_checkArray;
         break;
         default:
