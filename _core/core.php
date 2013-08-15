@@ -16,6 +16,7 @@
 # 2013/01/09 PM04:06 v1.2.3 : [cx] 更新 loadLib ,向下相容 提供自動初始化
 # 2013/01/10 AM11:02 v1.2.3 : [cx] 更新 loadMod ,向下相容 提供自動初始化
 # 2013/07/   AM  :   v1.3.0 : [cx] 修正許多BUG
+# 2013/08/15 PM  :   v1.3.1 : [cx] 修正 _cx_init_object() 路徑載入BUG
 # 
 # --------------------------------------------------------
 #「Function」(常用)
@@ -258,6 +259,12 @@ class core {
 	}
 
 	private function _cx_init_object($_library ,$_object_name = null, $_params = null){
+			$_libNameFormatter = trim($_library, "/");
+			$_libArray =  explode("/",$_libNameFormatter);
+			end( $_libArray );
+			$_libLastKey =  key($_libArray);
+			$_library = $_libArray[$_libLastKey];
+			// echo $_library;
 			($_object_name == null) and $_object_name = $_library;
 			$_classvar = $_object_name;
 			if($_params != null){
