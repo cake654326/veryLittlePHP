@@ -81,7 +81,7 @@ function cx_error_handler($error_level, $error_message, $file, $line) {
 }
 function shutdownHandler() {
 // header("Content-Type:text/html; charset=utf-8");
-echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+//echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
 $lasterror = error_get_last();
 	switch ($lasterror['type']){
 		case E_ERROR:
