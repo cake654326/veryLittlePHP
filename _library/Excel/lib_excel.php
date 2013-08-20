@@ -134,8 +134,8 @@ class lib_excel extends cx_lib {
 
 		$_x = 0;
 		$_y = 2;
-		foreach ( $_aData as $_d ) {
-			foreach ( $_aRule as $_key=> $_val ) {
+		foreach ( (array)$_aData as $_d ) {
+			foreach ( (array)$_aRule as $_key=> $_val ) {
 				// $this->objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow( $_x, $_y, $_d[$_key] ,PHPExcel_Cell_DataType::TYPE_STRING);
 				$this->objPHPExcel->getActiveSheet()
 				->getCellByColumnAndRow( $_x, $_y )
