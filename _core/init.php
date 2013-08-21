@@ -53,9 +53,7 @@ foreach($Core->config( 'CXDEBUG_IPs' ) as $_val ){
 }
 define( 'CXDEBUG', $_bDebug );
 
-if ( $Core->config( 'CXDEBUG' ) ) {
-	
-
+if ( $_bDebug ) {
 	require 'ChromePhp.php';
 	ChromePhp::groupCollapsed( '[CX_Init] $_SESSION ' );
 	ChromePhp::log( $_SESSION );
