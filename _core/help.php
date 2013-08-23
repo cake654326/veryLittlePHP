@@ -79,7 +79,7 @@ function cx_checkValue( $Input, $Type='', $len='' ) {
 
 function _cx_array_to_string( $_arr ) {
     $att = '';
-    foreach ( $_arr as $key => $val ) {
+    foreach ( (array)$_arr as $key => $val ) {
         $att .= $key . "='" . $val . "'";
     }
     return $att;

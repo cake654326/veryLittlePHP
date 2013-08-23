@@ -316,7 +316,7 @@ class cx_db {
 	public function selectLimit($_sql , $_numlist, $_offset ,$_arr = array() ){
 		$this->mRs  = $this->mConn->SelectLimit( $_sql, $_numlist, $_offset ,$_arr );
 		if( !$this->mRs ) return false;
-		return $this->getArray();
+		return $this;
 	}
 
 }
