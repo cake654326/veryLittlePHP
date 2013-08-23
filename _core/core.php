@@ -46,7 +46,7 @@
 # getUrl()                               
 #
 #@CORE端載入樣板(已經自動宣告樣板物件)
-# loadView( $_path, $_arr, $_b  = false )
+# loadView( $_path, $_arr, $_b  = true )
 #
 #@自動include載入模組
 # loadMod( $_name , $_autoSet = false , $_object_name = null ,$_params = null )     
@@ -190,7 +190,7 @@ class core {
 		return $this->config( 'base_http_title' ) . $this->getBaseUrl();
 	}
 
-	public function loadView( $_path, $_arr, $_b = false ) {
+	public function loadView( $_path, $_arr, $_b = true ) {
 		$val = $this->mTpl->view( $_path, $_arr, $_b );
 		$this->mTpl->clear();
 		return $val;
