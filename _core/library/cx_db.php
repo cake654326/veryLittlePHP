@@ -288,6 +288,7 @@ class cx_db {
 			case "UPDATE":
 				if ( array_key_exists( $_pk_key, $_inputarr ) ) {
 					unset( $_inputarr[$_pk_key] );
+					if(count($_inputarr) == 0)return false;
 				}
 				$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "UPDATE", $_where );
 			break;
