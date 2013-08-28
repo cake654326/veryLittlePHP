@@ -19,9 +19,17 @@
 		$conn	= ADONewConnection($my_DB);
 		$conn->charPage =65001;
 		$conn->Connect($dsn);
-
-	
 		break;
+	case "pdo_mssql":
+		$conn =NewADOConnection('pdo');
+		//$dsn = 'sqlsrv:Server=172.16.44.209;Database=CAP_JHSV2'; 
+		$conn->Connect('sqlsrv:Server='.$myhost,$myuser,$mypassword,$mydatabase);
+		break;
+	case "pdo_odbc_mssql":
+		// new PDO("odbc:Driver={SQL Server};Server=127.0.0.1;Database=test;",'sa','asd123');
+		$conn =NewADOConnection('pdo');
+		$conn->Connect('odbc:Driver={SQL Server};Server='.$myhost.';DATABASE='.$mydatabase.';charset=utf8',$myuser,$mypassword,false);
+	break;
 	case "mssql";
 //		dl("php_mssql.dll");	//動態裝載元件(php.ini就無須更改設定值)
 		$conn	= ADONewConnection($my_DB);

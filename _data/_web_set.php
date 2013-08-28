@@ -3,6 +3,8 @@
 	//====================資料庫
 	//	$my_DB = "access";					//Access
 	$my_DB = "ado_mssql";				//MSSQL
+	//$my_DB = "pdo_mssql";
+	//$my_DB = "pdo_odbc_mssql";
 	// $my_DB = "mysql";						//Mysql
 	switch ($my_DB)
 	{
@@ -10,7 +12,8 @@
 		$xPath = $xPath_p ."_data/nkc_epaper_+=-_)(&^%!@#$%^&..mdb";
 		$DBPath = realpath($xPath);
 		break;
-
+	case "pdo_mssql":
+	case "pdo_odbc_mssql":
 	case "ado_mssql";
 		// $myhost		= "XXXXXXXXXXXXXXXX";
 		$myhost		= "172.16.3.48";

@@ -93,6 +93,7 @@ class ADODB_pdo extends ADOConnection {
 	function _UpdatePDO()
 	{
 		$d = $this->_driver;
+		//print_cx($d);exit();
 		$this->fmtDate = $d->fmtDate;
 		$this->fmtTimeStamp = $d->fmtTimeStamp;
 		$this->replaceQuote = $d->replaceQuote;
@@ -103,9 +104,9 @@ class ADODB_pdo extends ADOConnection {
 		$this->nameQuote = $d->nameQuote;
 				
 		$this->hasGenID = $d->hasGenID;
-		$this->_genIDSQL = $d->_genIDSQL;
+		$this->_genIDSQL = @$d->_genIDSQL;
 		$this->_genSeqSQL = $d->_genSeqSQL;
-		$this->_dropSeqSQL = $d->_dropSeqSQL;
+		$this->_dropSeqSQL = @$d->_dropSeqSQL;
 
 		$d->_init($this);
 	}
@@ -126,10 +127,24 @@ class ADODB_pdo extends ADOConnection {
 	{
 		$at = strpos($argDSN,':');
 		$this->dsnType = substr($argDSN,0,$at);
-
+		
+		$_dbNameType = 'dbname';
+		
+		//sqlsrv , mssql pdo link
+		if($this->dsnType == 'sqlsrv'){
+			$_dbNameType = 'Database';
+		}
+/*
 		if ($argDatabasename) {
 			$argDSN .= ';dbname='.$argDatabasename;
 		}
+*/
+		if($argDatabasename != false){
+			$argDSN .= ';'.$_dbNameType.'='.$argDatabasename;
+		}
+		
+		echo $argDSN . "<br/>";
+		echo $this->dsnType . "<br/>";
 		try {
 			$this->_connectionID = new PDO($argDSN, $argUsername, $argPassword);
 		} catch (Exception $e) {
