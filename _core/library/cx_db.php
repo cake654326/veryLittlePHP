@@ -48,8 +48,12 @@ class cx_db {
 	var $mWhere;
 	var $mPk;
 	var $mRs;
-	var $mDrives = 'ado_mssql';
+	var $mDrives = 'ado_mssql';//mysql ado_mssql mssql pdo_mssql
 	var $mDrives_keyName = '';//mysql: Field ,mssql:COLUMN_NAME
+	var $bAutoAddN = true;//即將廢除
+	var $bAutoSetUseCX = true;//是否使用自身 autoSave 解析器
+
+
 
 	public function __construct( $_conn = null ) {
 		//parent::__construct();
@@ -139,12 +143,85 @@ class cx_db {
 		return $this;
 	}
 
+
+
+	function qstr($s,$magic_quotes=false)
+	{	
+		if (!$magic_quotes) {
+		
+			if ($this->replaceQuote[0] == '\\'){
+				// only since php 4.0.5
+				$s = adodb_str_replace(array('\\',"\0"),array('\\\\',"\\\0"),$s);
+				//$s = str_replace("\0","\\\0", str_replace('\\','\\\\',$s));
+			}
+			return  "'".str_replace("'",$this->replaceQuote,$s)."'";
+		}
+		
+		// undo magic quotes for "
+		$s = str_replace('\\"','"',$s);
+		
+		if ($this->replaceQuote == "\\'" || ini_get('magic_quotes_sybase'))  // ' already quoted, no need to change anything
+			return "'$s'";
+		else {// change \' to '' for sybase/mssql
+			$s = str_replace('\\\\','\\',$s);
+			return "'".str_replace("\\'",$this->replaceQuote,$s)."'";
+		}
+	}
+
+	public function mssqlArrayFormatter( $inputarr = false){
+		if( $inputarr ){
+			foreach( $inputarr as $k => $v) {
+				if (is_string($v)) {
+					$len = strlen($v);
+					if ($len == 0) $len = 1;
+					
+					if ($len > 4000 ) {
+						// NVARCHAR is max 4000 chars. Let's use NTEXT
+						$decl[ $k ] = "NTEXT";
+					} else {
+						$decl[ $k ] = "NVARCHAR($len)";
+					}
+
+					$params[ $k ] = "N". (strncmp($v,"'",1)==0? $v : $this->qstr($v));
+				} else if (is_integer($v)) {
+					$decl[ $k ] = "INT";
+					$params[ $k ] = "".$v;
+				} else if (is_float($v)) {
+					$decl[ $k ] = "FLOAT";
+					$params[ $k ] = "".$v;
+				} else if (is_bool($v)) {
+					$decl[ $k ] = "INT"; # Used INT just in case BIT in not supported on the user's MSSQL version. It will cast appropriately.
+					$params[ $k ] = "".(($v)?'1':'0'); # True == 1 in MSSQL BIT fields and acceptable for storing logical true in an int field
+				} else {
+					$decl[ $k ] = "CHAR"; # Used char because a type is required even when the value is to be NULL.
+					$params[ $k ] = "NULL";
+					}
+				$i += 1;
+			}
+		}
+		
+			
+// echo "<br/>p:";
+// print_r($params);
+// echo "<br/>d:";
+// print_r($decl);
+// echo "<br/>".$decl;
+
+		return $params;
+	}
+
 	/**
 	 * 簡化 execute 長度
 	 * 并且建立錯誤簡化 ADODB
 	 * **/
-	public function Execute( $_sql, $_arr ) {
-		$this->mRs  = $this->mConn->Execute( $_sql , $_arr );
+	public function Execute( $_sql, $inputarr = false ) {
+		$params = array();
+		$decl = array();
+		if($inputarr){
+			$params = $inputarr;
+		}
+
+		$this->mRs  = $this->mConn->Execute( $_sql , $params );
 		if ( !$this->mRs  ) {
 			$_error = $this->getError();
 			$_msg = "CX_DB Execute Error:" . $_error ;
@@ -162,7 +239,7 @@ class cx_db {
 	public function selectPkCount( $_table, $_pk_val, $_pk_key = "id" ) {
 		$this->mConn->setCxTitle( "cx_db selectPK " );
 		$_sql = "Select ". $_pk_key . " from " . $_table . " Where " . $_pk_key . "=?";
-		$_rs = $this->mConn->Execute( $_sql, array( $_pk_val ) );
+		$_rs = $this->Execute( $_sql, array( $_pk_val ) );
 		if ( !$_rs )return false;
 		return $_rs->RecordCount();
 
@@ -283,18 +360,55 @@ class cx_db {
 				$kSave_type = '';
 			}
 		}
-		
+
+		// //-- 檢查 是否加N -- 廢除
+		// if ( ($this->mDrives == 'ado_mssql' or $this->mDrives == 'mssql' ) and $this->bAutoAddN ){
+		// 	//$_inputarr = $this->mssqlArrayFormatter($_inputarr);
+		// }
+		// print_cx($_inputarr);
+
 		switch($kSave_type){
 			case "UPDATE":
 				if ( array_key_exists( $_pk_key, $_inputarr ) ) {
 					unset( $_inputarr[$_pk_key] );
 					if(count($_inputarr) == 0)return false;
 				}
-				$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "UPDATE", $_where );
+			//UPDATE temp SET DATA=?, TIME=?, NAME=? WHERE id=? 
+				if($this->mDrives == 'pdo_mssql' or $this->bAutoSetUseCX == true){
+					$_update_set = array();
+					$_update_data = array();
+					foreach((array)$_inputarr  as $_input_key => $_input_val){
+						$_update_set[] = $_input_key."=? ";
+						$_update_data[] = $_input_val;
+					}
+					$_auto_sql = " UPDATE " . $_table . " SET " .implode(",", $_update_set) . " WHERE " . $_where ;
+					$_rs = $this->Execute( $_auto_sql , $_update_data );
+
+				}else{
+					$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "UPDATE", $_where );
+				}
+				
 			break;
 			
 			case "INSERT":
+			if($this->mDrives == 'pdo_mssql' or $this->bAutoSetUseCX == true){
+				$_insert_set = array();
+				$_insert_val = array();
+				$_insert_data = array();
+				foreach((array)$_inputarr  as $_input_key => $_input_val){
+						$_insert_set[] = $_input_key;
+						$_insert_val[] = "?";
+						$_insert_data[] = $_input_val;
+				}
+
+				$_auto_sql = " INSERT INTO " . $_table . "( " .  implode(",", $_insert_set)  ." )
+								 VALUES ( " . implode(",",$_insert_val) ." ) ";
+				$_rs = $this->Execute( $_auto_sql , $_insert_data );
+			}else{
+				//INSERT INTO temp ( DATA, TIME, NAME ) VALUES ( ?, ?, ? )
 				$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "INSERT" );
+			}
+			
 			break;
 			default:
 				$_rs = false;

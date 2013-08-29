@@ -143,8 +143,8 @@ class ADODB_pdo extends ADOConnection {
 			$argDSN .= ';'.$_dbNameType.'='.$argDatabasename;
 		}
 		
-		echo $argDSN . "<br/>";
-		echo $this->dsnType . "<br/>";
+		// echo $argDSN . "<br/>";
+		// echo $this->dsnType . "<br/>";
 		try {
 			$this->_connectionID = new PDO($argDSN, $argUsername, $argPassword);
 		} catch (Exception $e) {
