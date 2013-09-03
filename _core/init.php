@@ -8,6 +8,7 @@
 # 2012/12/07         v1.2.0 : [cx]增加 MVC 控制器模式
 # 2012/12/22 AM09:15 v1.2.0 : [cx]修正 baseController
 # 2013/02/22 AM10:45 v1.2.0 : [cx]add old php have __dir__ defined value
+# 2013/09/03         v1.3.2 : [cx]
 # --------------------------------------------------------
 **/
 session_start();
@@ -72,16 +73,26 @@ if ( $_bDebug ) {
 require 'form-validation.php';
 include "library/cx_db.php";
 include "library/cx_lib.php";
-include $_path."_data/opensql.php";
-// header( "Cache-control:private" );
-global $conn;//cx
-$conn->SetFetchMode( ADODB_FETCH_ASSOC );
-$CONN = &$conn;
-$Core->setConn( $CONN );
 
-$VIEW['_v_jquery'] = "";
-$VIEW['_v_menu'] = "";
-$VIEW['_v_body'] = "";
+
+if($Core->config("CXDATABASE_ENABLE")){
+	require $_path."_data/adodb5/adodb.inc.php";
+	$CONN = false;
+	foreach($Core->config("CXDATABASE") as $_db_key => $DB_Config){
+		$Core->setDB( cxAdodb::linkDB( $DB_Config ) , $_db_key );
+	}
+
+}else{
+	include $_path."_data/opensql.php";
+	global $conn;//cx
+	$conn->SetFetchMode( ADODB_FETCH_ASSOC );
+	$CONN = &$conn;
+	$Core->setConn( $CONN );	
+}
+
+$VIEW['_v_jquery'] = "";//即將廢除
+$VIEW['_v_menu']   = "";//即將廢除
+$VIEW['_v_body']   = "";//即將廢除
 
 $Core->checkPost();
 

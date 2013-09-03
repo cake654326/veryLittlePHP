@@ -79,14 +79,14 @@ function cx_checkValue( $Input, $Type='', $len='' ) {
 
 function _cx_array_to_string( $_arr ) {
     $att = '';
-    foreach ( $_arr as $key => $val ) {
+    foreach ( (array)$_arr as $key => $val ) {
         $att .= $key . "='" . $val . "'";
     }
     return $att;
 }
 
-function cx_getHtmlTag( $_tag, $_arr, $_val ) {
-    return "<" . $_tag . " " . _cx_array_to_string( $_arr ) . " >" . $_val . "</" . $_tag . ">";
+function cx_getHtmlTag( $_tag, $_arr, $_val ,$_click = '') {
+    return "<" . $_tag . " " . _cx_array_to_string( $_arr ) . " ".$_click.">" . $_val . "</" . $_tag . ">";
 }
 
 function generatorPassword() {
@@ -275,11 +275,78 @@ function pages2( $total_rows, $offset, $limit_row, $url_str='', $class="page", $
             $of = max( 0, $offset - ( $limit_row * 10 ) ) ;
             $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">上10頁</a> ";
         }
+
         $a=min( $total_pages, ( $i*10 )+10 );
+        $_list = array();
         for ( $i = 1+( $i*10 ); $i <= $a; $i++ ) {
             $of = $i * $limit_row - $limit_row;
             if ( $i == $current_page )
                 $str2.= "[ $i ] ";
+            else
+                $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i "."</a> ";
+            array_push($_list, $of);
+        }
+        $_first = $_list[0];
+        $_last = end($_list);
+
+        if ( $i < $total_pages ) {
+            // $of = min( $total_rows, $offset + ( $limit_row * 10 ) );
+            $of = min( $total_rows, $_first + ( $limit_row * 10 ) );
+            $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">下10頁"."</a>";
+        }
+    }
+    else {
+        $str2 = "Page:";
+        for ( $i =1; $i <= $total_pages; $i++ ) {
+            $of = $i * $limit_row - $limit_row;
+            if ( $i == $current_page )
+                $str2.= "[ $i ] ";
+            else
+                $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i</a> ";
+        }
+
+    }
+    return "<span class=$class>$str2</span>";
+}
+
+function pages_css( $total_rows, $offset, $limit_row, $url_str='', $class="page", $mod="2" ,$_actionClass = '_cx_action' ) {
+    $current_page = ( $offset/$limit_row ) + 1;
+    $total_pages = ceil( $total_rows/$limit_row );
+    if ( $mod == "1" ) {
+        $current_page = ( $offset/$limit_row ) + 1;
+        $total_pages = ceil( $total_rows/$limit_row );
+        $str2 = "";
+        if ( $offset != 0 ) $str2 .="| <a href=\"$PHP_SELF?offset=0&$url_str\" class=\"$class\">FirstPage</a> | ";
+        if ( ( $offset - $limit_row ) >= 0 ) {
+            $prev_offset = $offset - $limit_row;
+            $str2 .= " <a href=\"$PHP_SELF?offset=$prev_offset&$url_str\" class=\"$class\">Previous</a> | ";
+        }
+
+        // $str2 .= " [ $current_page / $total_pages ] ";
+        $str2 .= "<a href='#' class='".$_actionClass."'>  $current_page / $total_pages  </a>";
+        //_actionClass <a href="?page=1" class="current">1</a>
+        $last_row = ( ( $total_pages-1 ) * $limit_row );
+        if ( ( $offset + $limit_row ) < $total_rows ) {
+            $next_offset = $offset + $limit_row;
+            $str2 .= "<a href=\"$PHP_SELF?offset=$next_offset&$url_str\" class=\"$class\">NEXT</a> | ";
+            $str2 .= "<a href=\"$PHP_SELF?offset=$last_row&$url_str\" class=\"$class\">LastPage</a> | ";
+        }
+    }
+    elseif ( $mod == "2" ) {
+
+        $str2 = "";
+        $i = ceil( $current_page / 10 ) - 1 ;
+
+        if ( $i >= 1 ) {
+            $of = max( 0, $offset - ( $limit_row * 10 ) ) ;
+            $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">上10頁</a> ";
+        }
+        $a=min( $total_pages, ( $i*10 )+10 );
+        for ( $i = 1+( $i*10 ); $i <= $a; $i++ ) {
+            $of = $i * $limit_row - $limit_row;
+            if ( $i == $current_page )
+                // $str2.= "[ $i ] ";
+                $str2 .= "<a href='#' class='".$_actionClass."'>  $i  </a>";
             else
                 $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i</a> ";
         }
@@ -294,7 +361,8 @@ function pages2( $total_rows, $offset, $limit_row, $url_str='', $class="page", $
         for ( $i =1; $i <= $total_pages; $i++ ) {
             $of = $i * $limit_row - $limit_row;
             if ( $i == $current_page )
-                $str2.= "[ $i ] ";
+                //$str2.= "[ $i ] ";
+                $str2 .= "<a href='#' class='".$_actionClass."'>  $i  </a>";
             else
                 $str2.= "<a href=\"$PHP_SELF?offset=$of&$url_str\" class=\"$class\">$i</a> ";
         }
@@ -655,4 +723,41 @@ function getMicrotime() {
     list( $usec, $sec ) = explode( ' ', microtime() );
     return (double)$usec + (double)$sec;
 }
+
+
+
+function cx_getBacktrace($ignore = 2) { 
+    // $trace = ''; 
+    // // print_cx(debug_backtrace());
+    // foreach (debug_backtrace() as $k => $v) { 
+    //     if ($k < $ignore) { 
+    //         continue; 
+    //     } 
+
+    //     array_walk($v['args'], '_cxBacktrace_resetArray'); 
+
+    //     $trace .= '#' . ($k - $ignore) . ' ' . $v['file'] . '(' . $v['line'] . '): ' . (isset($v['class']) ? $v['class'] . '->' : '') . $v['function'] . '(' . implode(', ', $v['args']) . ')' . "\n"; 
+    // } 
+
+    // return $trace; 
+
+
+    $backtracel = "\n";
+    foreach(debug_backtrace() as $k=>$v){
+        if($v['function'] == "include" || $v['function'] == "include_once" || $v['function'] == "require_once" || $v['function'] == "require"){ 
+          $backtracel .= "#".$k." ".$v['function']."(".$v['args'][0].") called at [".$v['file'].":".$v['line']."]\n"; 
+        }else{ 
+            $backtracel .= "#".$k." ".$v['function']."() called at [".$v['file'].":".$v['line']."]\n"; 
+        } 
+    } 
+    return $backtracel;
+
+} 
+
+function _cxBacktrace_resetArray(&$item, $key) 
+{ 
+    $item = var_export($item, true); 
+}
+
+
 ?>

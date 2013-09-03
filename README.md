@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.3
+*  @version     1.3.5
 
 ### Summary
 	This is a small framework to support the "ADODB",
@@ -31,5 +31,8 @@
 	3. 整合 PDF 庫
 	4. ADODB 版本升級
 	5. chromePhp 版本升級
-
+*  2013 09 03
+	1. 修正許多問題
+	2. 增加同時連接多顆資料庫
+	3.   
 

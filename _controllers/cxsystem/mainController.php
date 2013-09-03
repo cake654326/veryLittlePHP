@@ -23,6 +23,23 @@ class mainController extends baseController
 		echo "demo index";
 		print_cx( $aUrl );
 	}
+	
+	public function dbAction( $aUrl ){
+		$mDb = new cx_db("Report_DB");
+		$mDb->setTitle( "資料庫測試連接 Area " );
+		$_sql = "select top 10 * from Area ";
+		$_ddd = $mDb->sqlExec($_sql,array() );
+		print_cx($_ddd->getArray());
+		echo "<br/> --- <br/>";
+
+
+		$mDb2 = new cx_db("User_DB");
+		$mDb2->setTitle( "資料庫測試連接 User_DB " );
+		$_sql = "select * from user ";
+		$_ddd = $mDb2->sqlExec($_sql,array() );
+		print_cx($_ddd->getArray());
+		echo "<br/> --- <br/>";
+	}
 
 	public function ShowAction( $aUrl ) {
 		// echo "show page ";

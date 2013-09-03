@@ -75,11 +75,11 @@
 # --------------------------------------------------------
 **/
 class core {
-	var $version   = "1.3.0";
+	var $version   = "1.3.5";
 	var $mConfig   = array();
-	var $mConn     = null;//即將廢除
-	var $mAdodb    = null;//將取代 mConn
-	var $mPost     =array();
+	var $mConn     = null;//舊版 - 單一載入 opensql.php
+	var $mAdodb    = array();//新版 - config.php - CXDATABASE
+	var $mPost     = array();
 	var $mGet      = array();
 	var $mMod      = array();
 	var $mLib      = array();
@@ -122,6 +122,7 @@ class core {
 
 	public function init(){
 		$this->loadSysLib('cx_log');
+		$this->loadSysLib('cxAdodb');
 		$this->mLog = new cx_log();
 
 		return $this;
@@ -320,8 +321,37 @@ class core {
 		$this->mConn = &$_conn;
 	}
 
-	public function getDB() {
-		return $this->mConn;
+	public function setDB( $_db ,  $_cx_database_name = false ){
+		if($_cx_database_name == false){
+			$this->mConn = &$_db;
+			return true;
+		}
+
+		if(!$this->config("CXDATABASE_ENABLE")){
+			if($this->config("CXDEBUG")){
+				echo "[core->328]ERROR:your config don't enable Database!!";
+			}
+			return false;
+		}
+		$this->mAdodb[$_cx_database_name] = &$_db;
+		return true;
+	}
+
+	public function getDB( $_cx_database_name = false ) {
+		if($_cx_database_name == false){
+			return $this->mConn;
+		}
+		if(!$this->config("CXDATABASE_ENABLE")){
+			if($this->config("CXDEBUG")){
+				echo "[core->328]WARNING:your config don't enable Database!!";
+			}
+			return false;
+		}
+		if( array_key_exists($_cx_database_name, $this->mAdodb) ){
+			return $this->mAdodb[$_cx_database_name];
+		}
+		return false;
+		
 	}
 
 	public function setConfig( $_key, $_val ) {
