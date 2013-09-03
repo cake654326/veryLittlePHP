@@ -70,10 +70,12 @@ class cx_db {
 			if($Core){
 				if( is_string($_conn) ){
 					$_db_name = ( $Core->config($_conn) == null)?$_conn: $Core->config($_conn);
+
 					$_c = $Core->getDB($_db_name);
+
 					if($_c != false){
-						// echo "<br/>false<br/>";
-						$_conn = &$c;
+						// echo "<br/>!false<br/>";
+						$_conn = &$_c;
 					}else{
 						$_conn = $Core->getDB();
 					}
@@ -90,6 +92,7 @@ class cx_db {
 
 		
 		$this->mConn = &$_conn;
+		// print_cx($_conn);exit();
 	}
 	public function setDrives($_sqlDrives='ado_mssql'){
 		//or mysql ado_mssql
@@ -329,7 +332,7 @@ class cx_db {
 		
 		//exec sp_columns Tb_EndUser
 		$_tb = $this->getDescribe($_table);
-//print_cx($_tb);
+// print_cx($_tb);
 		$this->mConn->setCxTitle( "cx_db checkTableArray: " .$_table);
 		// $_sql = "exec sp_columns " . $_table;
 		// $_tb = $this->sqlExec($_sql,array())->getArray();

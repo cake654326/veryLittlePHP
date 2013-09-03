@@ -43,6 +43,9 @@ class cxAdodb{
 				$DB['conn'] = false;
 			break;
 		}
+
+		// print_cx($DB['conn']);
+		$DB['conn']->SetFetchMode( ADODB_FETCH_ASSOC );
 		return $DB['conn'];
 
 	}
