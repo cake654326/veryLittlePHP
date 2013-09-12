@@ -15,6 +15,21 @@ class CX {
 		return $Core;
 	}
 
+	public static function getIp(){
+		if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		    $myip = $_SERVER['REMOTE_ADDR'];
+		} else {
+		    $myip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+		    $myip = $myip[0];
+		}
+		return $myip;
+	}
+
+	public static function getInputUrl(){
+		$_url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		return $_url;
+	}
+
 	public static function getDB() {
 		global $CONN;
 		return $CONN;
@@ -86,6 +101,12 @@ class CX {
     }
 
     protected static function page404( $msg ){
+    	$ip = self::getIp();
+    	$url = self::getInputUrl();
+
+    	$msg .= " <ip: " . $ip .">";
+    	$msg .= " <url: " . $url .">";
+    	
     	$mCore = self::getCore();
     	//echo "<br> now getcwd: " . getcwd() . "<br>";  
     	if($mCore->config('404PAGELOG')) $mCore->log($msg);
@@ -106,6 +127,7 @@ class CX {
             throw new Exception("Action \"$controllerName::$action\" 不存在。");
         }
     }
+
 
 
 

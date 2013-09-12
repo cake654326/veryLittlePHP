@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.3.5
+*  @version     1.3.6 
 
 ### Summary
 	This is a small framework to support the "ADODB",
@@ -34,5 +34,11 @@
 *  2013 09 03
 	1. 修正許多問題
 	2. 增加同時連接多顆資料庫
-	3.   
+
+### updateTime
+*  2013 09 12 - v1.3.6 
+
+
+
+
 
