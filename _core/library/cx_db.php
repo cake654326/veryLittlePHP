@@ -3,7 +3,7 @@
 # cx_db.php
 #@author      Cake X 
 #@link
-#@version     DB v1.2.3
+#@version     DB v1.3.7
 #
 # ADODB 常用以及簡化工具組
 # --------------------------------------------------------
@@ -127,11 +127,8 @@ class cx_db {
 	 * 取得資料數量 簡化 adodb 函數名
 	 * */
 	public function getCout() {
-		// 函數名錯誤
-		//echo "c:" . $this->mRs->RecordCount();
-		if( !$this->mRs ) return false;
-
-		return $this->mRs->RecordCount();
+		// 函數名錯誤 未來將會廢除
+		return $this->getCount();
 	}
 	public function getCount() {
 		//echo "c:" . $this->mRs->RecordCount();

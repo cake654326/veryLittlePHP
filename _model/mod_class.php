@@ -1,51 +1,21 @@
 <?php
 class mod_class extends cx_db{
-	var $mTableName = 'Tb_Class';
-	public function __construct( $_conn ) {
-		parent::__construct( $_conn );
+	var $mTableName = 'user';
+	public function __construct( $_conn = null  ) { // $_conn = null 在1.3.7版 已經無功用
+		$sData_base = "MY_DATABASE_Data_DB";//資料庫別名 若不使用 則設 null 
+		parent::__construct( $sData_base );
 		//$this->mConn
+		$this->setDrives('mssql');
 	}
 
-	/**
-	 * tb_class object
-	 *
-	 * **/
-	public function getClassMaxValue() {
-		$this->mConn->setCxTitle( "mod_user getClassMaxValue " );
-		$_sql = "SELECT Class_No, max(Class_Name) as Class_Name  from Tb_Class ".
-			" group by Class_No ORDER BY Class_No DESC ";
-		$_rs = $this->mConn->Execute( $_sql, array()  );
-		if ( !$_rs )return false;
-		return $_rs->GetArray();
+	public function finds( $_where = " 1=1 " , $_arr = array() ){
+		$this->setTitle( "mod_user::finds ,where => ".$_where );
+		return $this->sqlExec("SELECT * FROM user WHERE ".$_where ,$_arr)->getArray();
 	}
 
-	public function getUserClass( $_class_no ) {
-		$this->mConn->setCxTitle( "mod_user getUserClass" );
-		$_sql = "select * from Tb_Class WHERE Class_No=?";
-		$_rs = $this->mConn->Execute( $_sql, array( $_class_no ) );
-		if ( !$_rs )return false;
-		return $_rs->GetArray();
-	}
-
-	/**
-	 *  取得所有 tb_class 資料
-	 * */
-	public function getAllClass(){
-		$this->mConn->setCxTitle( "mod_user getAllClass 取得所有 tb_class 資料" );
-		$_sql = "select * from Tb_Class where 1=1";
-		$_rs = $this->mConn->Execute( $_sql );
-		if ( !$_rs )return false;
-		return $_rs->GetArray();
-	}
-
-	public function db_save($_data){
-		$this->mConn->setCxTitle( "mod_class db_save " );
-		$_rs = $this->setTable("Tb_Class")
-					->setPk("Class_No")
-					->updataWhere("Tb_Class.Class_No='" . $_data['Class_No'] ."'" )
-					->save($_data,$_data['Class_No']);
-		if ( !$_rs )return false;
-		return $_rs;
+	public function find( $_where = " 1=1 " , $_arr = array() ){
+		$this->setTitle( "mod_user::find ,where => ".$_where );
+		return $this->sqlExec("SELECT * FROM user WHERE ".$_where ,$_arr);
 	}
 
 
