@@ -14,6 +14,53 @@ class lib_excel extends cx_lib {
 
 	}
 
+
+	// ===== Input Function =======
+	public function load( $_file_path ,$importCells=null){
+		// $objPHPExcel = PHPExcel_IOFactory::load($_FILES['empData']['tmp_name']);
+		$obj = PHPExcel_IOFactory::load( $_file_path );
+
+		$_title_io = true;
+		if($importCells == null){
+			//標題欄位名稱
+			$_title_io = false;
+		}
+		
+		$objPHPExcel;
+		try {
+		    $objPHPExcel = PHPExcel_IOFactory::load($_file_path);
+		} catch (Exception $e) {
+		    // die('Error loading file: ' . $e->getMessage());
+		    return false;
+		}
+
+		$objWorksheet = $objPHPExcel->getActiveSheet();
+
+		$data = array();
+		foreach ($objWorksheet->getRowIterator() as $row)
+		{
+			$cellIterator = $row->getCellIterator();
+			$cellIterator->setIterateOnlyExistingCells(true);
+			$rowdata = array();
+			foreach ($cellIterator as $i => $cell)
+			{
+				if($_title_io == true){
+					if (isset($importCells[$i])) $rowdata[$importCells[$i]] = $cell->getValue();
+				}else{
+					$rowdata[$i] = $cell->getValue();
+				}
+				
+			}
+		    $data[] = $rowdata;
+		}
+
+		return $data;
+
+	}
+
+
+	// ===== Output Function =======
+
 	public function setGroupKey( $_group ){
 		$this->_nowGroupKey = $_group;
 		return $this;

@@ -36,6 +36,8 @@
 									增加重構selectLimit() 函數
 # 2013/09/02         v1.2.4-2 : [cx]  修正autoSave 函數相容 PDO
 
+# 2013/09/24 Core v1.3.7(DB-v1.2.5)   : [cx]  insertMultiple($_table,$_datafield,$_data ) insert 多筆
+
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -400,10 +402,12 @@ class cx_db {
 
 		switch($kSave_type){
 			case "UPDATE":
+
 				if ( array_key_exists( $_pk_key, $_inputarr ) ) {
 					unset( $_inputarr[$_pk_key] );
 					if(count($_inputarr) == 0)return false;
 				}
+
 			//UPDATE temp SET DATA=?, TIME=?, NAME=? WHERE id=? 
 				if($this->mDrives == 'pdo_mssql' or $this->bAutoSetUseCX == true){
 					$_update_set = array();
@@ -463,6 +467,49 @@ class cx_db {
 		$this->mRs  = $this->mConn->SelectLimit( $_sql, $_numlist, $_offset ,$_arr );
 		if( !$this->mRs ) return false;
 		return $this;
+	}
+
+
+	/***
+	 * # insert多筆資料
+	 * insertMultiple($_table,$_datafield,$_data )  
+	 * 
+	 * @table 表
+	 * @datafield 欄位名稱
+	 * @data 資料串列
+	 *
+	 ***/
+	public function insertMultiple($_table,$_datafield,$_data ){
+		$insert_values  = array();
+		$question_marks = array();
+		foreach($_data as $d){
+			$question_marks[] = '('  . $this->placeholders('?', sizeof($d)) . ')';
+			$insert_values = array_merge($insert_values, array_values($d));
+		}
+		$sql = " INSERT INTO " .
+				$_table . " (" . implode(",", array_keys($_datafield) ) . ") VALUES " . 
+				implode(',', $question_marks);
+		// $sql = " INSERT INTO " .
+		// 		$_table . " (" . implode(",", $_datafield ) . ") VALUES " . 
+		// 		implode(',', $question_marks);
+
+
+		// echo $sql;
+		// print_cx($insert_values);
+		return $this->Execute( $sql , $insert_values );
+		// exit();
+
+	}
+
+	private function placeholders($text, $count=0, $separator=","){
+	    $result = array();
+	    if($count > 0){
+	        for($x=0; $x<$count; $x++){
+	            $result[] = $text;
+	        }
+	    }
+
+	    return implode($separator, $result);
 	}
 
 }

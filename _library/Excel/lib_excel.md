@@ -1,11 +1,17 @@
 ### EXCEL PHP 
 
+### 依附版本
+* CORE v1.3.6 => version: 0.1
+* CORE v1.3.7 => version: 0.2
+
 ### Library
 1. lib_excel.php
 2. 依賴 Excel\PHPExcel
 
 ### History
 * ***time: 2013-08/19*** version: 0.1
+* ***time: 2013-09/24*** version: 0.2
+	* ***增加讀取excel函數***
 
 ### 用途
 1. 簡化建立excel csv 功能
@@ -24,6 +30,7 @@
 	- @_reportData : 資料來源
 
 ### 來源範例
+```php
 	Array
 	(
 	    [0] => Array
@@ -41,13 +48,11 @@
 	            [user_s_contract] => JEFF
 	            [user_s_c_title] => RD 
 	        )
-
-
-
+```
 
 ### 用法
 
-``` php Code
+```php
 
 	//載入 library 
 	$this->mCore->loadLib("Excel/lib_excel",true,"mExcel");
@@ -77,4 +82,72 @@
 	$this->mCore->mExcel->outputCsv($_file_name ,$_reportData);
 
 
+``` 
+
+
+<hr/>
+
+### 讀取EXCEL
+**load($uploadpath , $importCells);**
+* @uploadpath EXCEL 檔案位置
+* @importCells EXCEL 欄位依照順序之自定名稱（若沒填則以數字作為KEY)
+
+##### ***importCells 範例***
+```php
+//需要依照 excel欄位 順序
+	$importCells = array(
+	'Sch_Code',	
+	'GClass',	
+	'AcntTP',	
+	'PWD',	
+	'REM',	
+	'Acnt_Name'
+	);
 ```
+
+##### ***用法***
+```php
+$this->mCore->loadLib("Excel/lib_excel",true,"mExcel");
+
+$uploaddir =  realpath( "./_public/excel_file" );
+
+$uploadpath = $uploaddir . "\\" . "abc.xls" ;
+$importCells = null;//可為空
+$data = $this->mCore->mExcel->load($uploadpath , $importCells);
+```
+
+##### ***完整範例 包含讀取上傳***
+```php
+$_exe = strtolower( array_pop( explode( '.', $_FILES['upload_file']['name'] ) )  );
+//echo "exe:" . $_exe;
+if( preg_match("/\.(xls|xlsx)$/i" , strtolower( $_FILES['upload_file']['name'] ) ) ){
+	echo "<br/>". $_FILES['upload_file']['name'] ." is excel!";
+
+	$this->mCore->loadLib("Excel/lib_excel",true,"mExcel");
+
+	$_uploadFileName  = date ("YmdHis")  ;
+	$_rPath = './_public/upload_excel';
+	$uploaddir =  realpath( $_rPath );
+	$uploadfile = $uploaddir . "\\" . $_uploadFileName  ;
+	$uploadpath =  $uploadfile . "." . $_exe;
+	// if ( move_uploaded_file($_FILES['upload_file']['tmp_name'], $uploadpath ) ){
+
+	try {
+	   copy( $_FILES['upload_file']['tmp_name'] , $uploadpath );
+	   // move_uploaded_file($_FILES['upload_file']['tmp_name'], $uploadpath )
+	} catch (Exception $e) {
+	    die('Error copy file: ' . $e->getMessage());
+	}
+
+	$importCells = array(
+	'Sch_Code',	
+	'GClass',	
+	'AcntTP',	
+	'PWD',	
+	'REM',	
+	'Acnt_Name'
+	);
+			$data = $this->mCore->mExcel->load($uploadpath , $importCells);
+}
+```
+
