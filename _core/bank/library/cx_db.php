@@ -9,31 +9,35 @@
 # --------------------------------------------------------
 # 「History」
 #
-# 2012/10/24 AM  :   v1.1 : [cx] save()  重寫之前版本的SAVE , 無法相容 以前專案
+# 2012/10/24 AM  :   v1.1     : [cx] save()  重寫之前版本的SAVE , 無法相容 以前專案
 #								 setTable
 #
-# 2012/11/06 AM  :   v1.1.1 : [cx] Execute()  簡化 execute 長度并且建立錯誤簡化 ADODB
-# 2012/11/08 AM  :   v1.1.2 : [cx] sqlExec()  使 EXECUTE 回傳 this
+# 2012/11/06 AM  :   v1.1.1   : [cx] Execute()  簡化 execute 長度并且建立錯誤簡化 ADODB
+# 2012/11/08 AM  :   v1.1.2   : [cx] sqlExec()  使 EXECUTE 回傳 this
 #								 getArray() 簡化 Adodb  GetArray
 #								 getCout()  取得資料數量 簡化 adodb 函數名
 #
-# 2012/11/14 AM  :   v1.1.3 : [cx] autoSave 簡化SAVE 采固定PK的方式
+# 2012/11/14 AM  :   v1.1.3   : [cx] autoSave 簡化SAVE 采固定PK的方式
 #							  	   checkTableArray 為save 增加自動化 欄位過濾
 #
-# 2012/11/15 AM  :   v1.1.4 : [cx] setTableData 設定 INSERT OR UPDATE 預設載入的 欄位名稱，將會自動檢查。
+# 2012/11/15 AM  :   v1.1.4   : [cx] setTableData 設定 INSERT OR UPDATE 預設載入的 欄位名稱，將會自動檢查。
 #
-# 2012/11/29 AM  :   v1.1.5 : [cx] __construct = 增加 CORE DB 自動加載
+# 2012/11/29 AM  :   v1.1.5   : [cx] __construct = 增加 CORE DB 自動加載
 #
-# 2013/01/03 pm14:00 v1.1.6 : [cx] Execute = Add auto message to log file
+# 2013/01/03 pm14:00 v1.1.6   : [cx] Execute = Add auto message to log file
 #
-# 2013/02/02                : [cx] getArray( $eq ) 直接取得陣列KEY之VALUE，NULL = 得到全部，若無資料則回傳false
+# 2013/02/02                  : [cx] getArray( $eq ) 直接取得陣列KEY之VALUE，NULL = 得到全部，若無資料則回傳false
 #
-# 2013/02/21                : [cx]增加 getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
+# 2013/02/21                  : [cx] 增加 getDescribe,setDrives($_sqlDrives='mysql') //or ado_mssql 設定載體函數（目的為了設定autoSave() 需要知道載體，否則會有資料庫語法不合之因素
 #
-# 2013/08/13         v1.2.1 : [cx]  autoSave ,save 增加 狀態限制(INSERT,UPDATE,AUTO)
+# 2013/08/13         v1.2.1   : [cx]  autoSave ,save 增加 狀態限制(INSERT,UPDATE,AUTO)
 #
-# 2013/08/14         v1.2.3 : [cx]  修正getCount 函數名稱
+# 2013/08/14         v1.2.3   : [cx]  修正getCount 函數名稱
 									增加重構selectLimit() 函數
+# 2013/09/02         v1.2.4-2 : [cx]  修正autoSave 函數相容 PDO
+
+# 2013/09/24 Core v1.3.7(DB-v1.2.5)   : [cx]  insertMultiple($_table,$_datafield,$_data ) insert 多筆
+
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -53,21 +57,44 @@ class cx_db {
 	var $bAutoAddN = true;//即將廢除
 	var $bAutoSetUseCX = true;//是否使用自身 autoSave 解析器
 
-
-
 	public function __construct( $_conn = null ) {
 		//parent::__construct();
+		global $Core;
+		$this->mCore = &$Core;
 		if($_conn == null){
-			global $Core;
 			if($Core){
 				$_conn = $Core->getDB();
-				$this->mCore = &$Core;
 			}else{
 				$_msg = "ERROR:[cx_db] don't have Core OR __construct( $_conn ) val adodb loading";
 				exit;
 			}
+		}else{
+			if($Core){
+				if( is_string($_conn) ){
+					$_db_name = ( $Core->config($_conn) == null)?$_conn: $Core->config($_conn);
+
+					$_c = $Core->getDB($_db_name);
+
+					if($_c != false){
+						// echo "<br/>!false<br/>";
+						$_conn = &$_c;
+					}else{
+						$_conn = $Core->getDB();
+					}
+
+				}else{
+					$_conn = $Core->getDB();
+				}
+			}else{
+				$_msg = "ERROR:[cx_db] don't have Core OR __construct( $_conn ) val adodb loading";
+				exit;
+			}
+				
 		}
+
+		
 		$this->mConn = &$_conn;
+		// print_cx($_conn);exit();
 	}
 	public function setDrives($_sqlDrives='ado_mssql'){
 		//or mysql ado_mssql
@@ -279,11 +306,17 @@ class cx_db {
 		$_sql = '';
 		switch($this->mDrives){
 			case "mysql":
+			case "pdo_mysql":
+			case "odbc_pdo_mysql":
 				$_sql = "DESCRIBE " . $_table_name;
 				$this->mDrives_keyName =  'Field' ;
 
 			break;
+			case "mssql":
 			case "ado_mssql":
+			case "pdo_mssql":
+			case "odbc_pdo_mssql":
+			case "cx_mssql":
 			default:
 				$_sql = "exec sp_columns " . $_table_name;
 				$this->mDrives_keyName = 'COLUMN_NAME';
@@ -301,7 +334,7 @@ class cx_db {
 		
 		//exec sp_columns Tb_EndUser
 		$_tb = $this->getDescribe($_table);
-//print_cx($_tb);
+// print_cx($_tb);
 		$this->mConn->setCxTitle( "cx_db checkTableArray: " .$_table);
 		// $_sql = "exec sp_columns " . $_table;
 		// $_tb = $this->sqlExec($_sql,array())->getArray();
@@ -369,10 +402,12 @@ class cx_db {
 
 		switch($kSave_type){
 			case "UPDATE":
+
 				if ( array_key_exists( $_pk_key, $_inputarr ) ) {
 					unset( $_inputarr[$_pk_key] );
 					if(count($_inputarr) == 0)return false;
 				}
+
 			//UPDATE temp SET DATA=?, TIME=?, NAME=? WHERE id=? 
 				if($this->mDrives == 'pdo_mssql' or $this->bAutoSetUseCX == true){
 					$_update_set = array();
@@ -432,6 +467,49 @@ class cx_db {
 		$this->mRs  = $this->mConn->SelectLimit( $_sql, $_numlist, $_offset ,$_arr );
 		if( !$this->mRs ) return false;
 		return $this;
+	}
+
+
+	/***
+	 * # insert多筆資料
+	 * insertMultiple($_table,$_datafield,$_data )  
+	 * 
+	 * @table 表
+	 * @datafield 欄位名稱
+	 * @data 資料串列
+	 *
+	 ***/
+	public function insertMultiple($_table,$_datafield,$_data ){
+		$insert_values  = array();
+		$question_marks = array();
+		foreach($_data as $d){
+			$question_marks[] = '('  . $this->placeholders('?', sizeof($d)) . ')';
+			$insert_values = array_merge($insert_values, array_values($d));
+		}
+		$sql = " INSERT INTO " .
+				$_table . " (" . implode(",", array_keys($_datafield) ) . ") VALUES " . 
+				implode(',', $question_marks);
+		// $sql = " INSERT INTO " .
+		// 		$_table . " (" . implode(",", $_datafield ) . ") VALUES " . 
+		// 		implode(',', $question_marks);
+
+
+		// echo $sql;
+		// print_cx($insert_values);
+		return $this->Execute( $sql , $insert_values );
+		// exit();
+
+	}
+
+	private function placeholders($text, $count=0, $separator=","){
+	    $result = array();
+	    if($count > 0){
+	        for($x=0; $x<$count; $x++){
+	            $result[] = $text;
+	        }
+	    }
+
+	    return implode($separator, $result);
 	}
 
 }

@@ -39,44 +39,42 @@ $Core->setConfig("base_http_title" , "http://");
 /**
  # DB 設定檔
  **/
-//-- 啟用 DB 設定檔,會自動停用 opensql.php --
-$Core->setConfig("CXSYSTEM" , true ); //是否啟用 框架控制器
+ 
+// -- 啟用 DB 設定檔,啟用會自動停用 _data/opensql.php 及 _web_set.php
+$Core->setConfig("CXDATABASE_ENABLE" , true ); //是否啟用 DB 設定檔
+$__config_my_database = array();
 
-$Core->setConfig("DB_Defaut" , array(
-										"Drive"    => "mysql", 
+//YOUR_DB_ALIAS_NAME 是對應 model 內部設定的名稱
+$Core->setConfig('YOUR_DB_ALIAS_NAME' ,'YOUR_CONFIG_DB_NAME');//設定資料庫別名
+$__config_my_database['YOUR_CONFIG_DB_NAME'] = 
+							array(
+										"Drive"    => "ado_mssql", //pdo_mssql
 										"Path"     => "", //DB defaut Path 資料庫路徑 access 用
-										"Host"     => "", 
-										"User"     => "", 
-										"Password" => "",
-										"Database" => ""
-							) );
+										"Host"     => "127.0.0.1", 
+										"User"     => "root", 
+										"Password" => "Passwd",
+										"Database" => "DB_NAME"
 
-// $Core->setConfig("DB_Defaut" , array(
-// 										"Drive"    => "ado_mssql", 
-// 										"Path"     => "", //DB defaut Path 資料庫路徑 access 用
-// 										"Host"     => "172.16.3.48", 
-// 										"User"     => "sa", 
-// 										"Password" => "seat",
-// 										"Database" => "framework_db"
-// 							) );
+							);
 
-
-// $Core->setConfig("DB_Defaut" , array(
-// 										"Drive"    => "access", 
-// 										"Path"     => "../xxx.mdb", //DB defaut Path 資料庫路徑 access 用
-// 										"Host"     => "", //no host
-// 										"User"     => "", 
-// 										"Password" => "",
-// 										"Database" => ""
-// 							) );
+$Core->setConfig('YOUR_DB_ALIAS_NAME2' ,'YOUR_CONFIG_DB_NAME2');//設定資料庫別名
+$__config_my_database['YOUR_CONFIG_DB_NAME2'] = 
+							array(
+										"Drive"    => "mysql", //pdo_mysql
+										"Path"     => "", //DB defaut Path 資料庫路徑 access 用
+										"Host"     => "127.0.0.2", 
+										"User"     => "root", 
+										"Password" => "Passwd",
+										"Database" => "DB_NAME"
+							);
+$Core->setConfig("CXDATABASE"  ,$__config_my_database );
 
 
 /**
  # 自定義 設定檔
  **/
 $Core->setConfig('json_file' ,"../history/");
-$Core->setConfig('json' ,".json");
-$Core->setConfig('PAR' ,1.25);
+
 
 
   
