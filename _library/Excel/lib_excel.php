@@ -40,10 +40,12 @@ class lib_excel extends cx_lib {
 		foreach ($objWorksheet->getRowIterator() as $row)
 		{
 			$cellIterator = $row->getCellIterator();
-			$cellIterator->setIterateOnlyExistingCells(true);
+			// $cellIterator->setIterateOnlyExistingCells(true);
+			$cellIterator->setIterateOnlyExistingCells(false);//所有欄位
 			$rowdata = array();
 			foreach ($cellIterator as $i => $cell)
 			{
+				//echo "<br/>i:".$i." ,".  $importCells[$i] . " => " . $cell;
 				if($_title_io == true){
 					if (isset($importCells[$i])) $rowdata[$importCells[$i]] = $cell->getValue();
 				}else{
