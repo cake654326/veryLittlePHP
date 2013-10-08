@@ -48,6 +48,7 @@ $__config_my_database = array();
 $Core->setConfig('YOUR_DB_ALIAS_NAME' ,'YOUR_CONFIG_DB_NAME');//設定資料庫別名
 $__config_my_database['YOUR_CONFIG_DB_NAME'] = 
 							array(
+										"Auto"            => false,//是否啟用自動連線
 										"Drive"    => "ado_mssql", //pdo_mssql
 										"Path"     => "", //DB defaut Path 資料庫路徑 access 用
 										"Host"     => "127.0.0.1", 
@@ -60,6 +61,7 @@ $__config_my_database['YOUR_CONFIG_DB_NAME'] =
 $Core->setConfig('YOUR_DB_ALIAS_NAME2' ,'YOUR_CONFIG_DB_NAME2');//設定資料庫別名
 $__config_my_database['YOUR_CONFIG_DB_NAME2'] = 
 							array(
+										"Auto"            => false,//是否啟用自動連線
 										"Drive"    => "mysql", //pdo_mysql
 										"Path"     => "", //DB defaut Path 資料庫路徑 access 用
 										"Host"     => "127.0.0.2", 

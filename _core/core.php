@@ -74,8 +74,8 @@
 #
 # --------------------------------------------------------
 **/
-class core {
-	var $version   = "1.3.7";
+class core { 
+	var $version   = "1.3.8";
 	var $mConfig   = array();
 	var $mConn     = null;//舊版 - 單一載入 opensql.php
 	var $mAdodb    = array();//新版 - config.php - CXDATABASE
@@ -341,13 +341,17 @@ class core {
 		if($_cx_database_name == false){
 			return $this->mConn;
 		}
+
 		if(!$this->config("CXDATABASE_ENABLE")){
 			if($this->config("CXDEBUG")){
 				echo "[core->328]WARNING:your config don't enable Database!!";
 			}
 			return false;
 		}
+
 		if( array_key_exists($_cx_database_name, $this->mAdodb) ){
+	// echo "ex:" . $_cx_database_name;		
+// print_cx($this->mAdodb);
 			return $this->mAdodb[$_cx_database_name];
 		}
 		return false;

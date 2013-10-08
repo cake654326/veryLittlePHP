@@ -76,10 +76,16 @@ include "library/cx_lib.php";
 
 
 if($Core->config("CXDATABASE_ENABLE")){
+	// require $_path."_data/_adodb/adodb.inc.php";
 	require $_path."_data/adodb5/adodb.inc.php";
 	$CONN = false;
 	foreach($Core->config("CXDATABASE") as $_db_key => $DB_Config){
-		$Core->setDB( cxAdodb::linkDB( $DB_Config ) , $_db_key );
+
+		// print_cx($DB_Config);exit();
+		if($DB_Config['Auto'] == true){
+			$Core->setDB( cxAdodb::linkDB( $DB_Config ) , $_db_key );//linkDb
+		}
+		// echo $_db_key . "<br/>";
 	}
 
 }else{
