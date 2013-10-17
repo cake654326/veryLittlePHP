@@ -52,7 +52,7 @@ class CX {
 		// print_cx($mCore->mBackUrl);
 
 		$mCore->mBaseUrl = ( !$mCore->config("base_base_url" ) )?$_router->getBaseUrl():$mCore->config("base_base_url" );
-		// echo $mCore->mBaseUrl;
+		// echo "mCore->mBaseUrl:" . $mCore->mBaseUrl;
 		if( $_url[0] == '' || !isset($_url[0])){//!isset($_url[0]) || 
 			$_base_ctrl = $mCore->config("baseController");
 			header("Location: "  ."./index.php" .$_base_ctrl );
@@ -63,7 +63,8 @@ class CX {
 
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
 		$mCTRL->init(  $_router->aData );//load init()
-		$_returnData = $mCTRL->{$sAction}($_router->aData);
+		$_returnData = $mCTRL->{$sAction}( $_router->aData );
+
 		if($mCTRL->showDebug()) 
 			echo $mCore->cxDebugView();//debug view
 

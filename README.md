@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.3.8
+*  @version     1.3.8-1
 
 ### Summary
 	This is a small framework to support the "ADODB",
@@ -40,10 +40,12 @@
 *  2013 10 08
 	1. 設定檔 資料庫連線增加自定是否初始化連線
 	2. core/init.php 實做建立是否初始化連線
+
 ### updateTime
 *  2013 09 12 - v1.3.6 
 *  2013 09 24 - v1.3.7
 *  2013 10 08 - v1.3.8
+*  2013 10 17 - v1.3.8-1
 
 
 

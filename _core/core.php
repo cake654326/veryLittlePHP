@@ -75,7 +75,7 @@
 # --------------------------------------------------------
 **/
 class core { 
-	var $version   = "1.3.8";
+	var $version   = "1.3.8-1";
 	var $mConfig   = array();
 	var $mConn     = null;//舊版 - 單一載入 opensql.php
 	var $mAdodb    = array();//新版 - config.php - CXDATABASE
@@ -165,6 +165,13 @@ class core {
 	 */
 	public function redirect( $_url , $_CONTROLLER = TRUE){
 		header("Refresh: 0; url=" . $this->Url( $_url , $_CONTROLLER) );
+	}
+
+	/* 取得 index.php 之後的網址 陣列
+	 * @return array
+	 */
+	public function getBackUrl(){
+		return $this->mBackUrl;
 	}
 
 	public function Url( $_url , $_CONTROLLER = TRUE){
