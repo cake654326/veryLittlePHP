@@ -75,20 +75,23 @@
 # --------------------------------------------------------
 **/
 class core { 
-	var $version   = "1.3.8-1";
-	var $mConfig   = array();
-	var $mConn     = null;//舊版 - 單一載入 opensql.php
-	var $mAdodb    = array();//新版 - config.php - CXDATABASE
-	var $mPost     = array();
-	var $mGet      = array();
-	var $mMod      = array();
-	var $mLib      = array();
-	var $mSysLib   = array();
-	var $mHelpFunc = array();
-	var $mTpl      = null;
-	var $mBaseUrl  = null;
-	var $mBackUrl  = array(); // 後輟
-	var $mLog      = null;
+	var $version       = "1.3.8-2";
+	var $mConfig       = array();
+	var $mConn         = null;//舊版 - 單一載入 opensql.php
+	var $mAdodb        = array();//新版 - config.php - CXDATABASE
+	var $mPost         = array();
+	var $mGet          = array();
+	var $mMod          = array();
+	var $mLib          = array();
+	var $mSysLib       = array();
+	var $mHelpFunc     = array();
+	var $mTpl          = null;
+	var $mBaseUrl      = null;
+	var $mBackUrl      = array(); // 後輟
+	var $mLog          = null;
+	
+	var $sControlPath = null;
+	var $sActionName = null;
 
 	var $mLayout = array(); //[實驗] !* 未定 載入LAYOUT樣板
 
@@ -188,6 +191,15 @@ class core {
 	public function setBaseUrl( $_url ){
 		$this->mBaseUrl = $_url;
 		return $this;
+	}
+
+	public function getControlName(){
+		$_control = str_replace("./_controllers/","",$this->sControlPath);
+		return str_replace(".php","",$_control);
+	}
+
+	public function getActionName(){
+		return $this->sActionName;
 	}
 
 	public function getBaseUrl(){

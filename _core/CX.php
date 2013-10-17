@@ -44,7 +44,8 @@ class CX {
 
 		$_router = new cx_router();
 		$_path = $_router->init( $MVC_PATH . "_controllers" ,$_host , $mCore->config("INDEX") )->getPath();
-		
+		$mCore->sControlPath = $_path;//control路徑
+		// echo $_path . "<br/>";
 
 		// $_url = $_router->aUrl;//BUG
 		$_url = $_router->aVal_URI;
@@ -59,9 +60,12 @@ class CX {
 			exit;
 		}
 		$mCore->loadDebugInit();//啟用 debug
-		$mCTRL = self::_getController( $_path , $_router->getControllerName()  );
+		$_controller_name = $_router->getControllerName();
+		// echo "_controller_name:" . $_controller_name . "<br/>";
+		$mCTRL = self::_getController( $_path , $_controller_name  );
 
 		$sAction = self::_getAction($mCTRL, $_router->sAction );
+		$mCore->sActionName = $sAction;
 		$mCTRL->init(  $_router->aData );//load init()
 		$_returnData = $mCTRL->{$sAction}( $_router->aData );
 
