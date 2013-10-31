@@ -58,7 +58,10 @@ if ( ! function_exists( 'force_download' ) )
 		}
 
 		// Generate the server headers
-		if ( strpos( $_SERVER['HTTP_USER_AGENT'], "MSIE" ) !== FALSE )
+		if ( strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" ) !== FALSE 
+			or 
+			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" )!== FALSE 
+			)
 		{
 			
 			header( 'Content-Type: "'.$mime.'"' );

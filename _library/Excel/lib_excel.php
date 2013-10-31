@@ -99,6 +99,19 @@ class lib_excel extends cx_lib {
 		if($_aRule == false){
 			$_aRule = $this->aRule[$this->_nowGroupKey];
 		}
+
+				//處理 IE 問題
+		if ( 
+			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" )
+			or 
+			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" )
+			){
+
+			$_fileName = iconv('utf-8', 'big5', $_fileName);
+			// exit();
+		}
+
+
 		// $fp = fopen('php://stdout','wb');
 		header("Content-type: text/csv");
 		header("Cache-Control: no-store, no-cache");
@@ -200,7 +213,18 @@ class lib_excel extends cx_lib {
 
 		$this->objPHPExcel->setActiveSheetIndex( 0 );
 
+		//處理 IE 問題
+		if ( 
+			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" )
+			or 
+			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" )
+			){
 
+			$_fileName = iconv('utf-8', 'big5', $_fileName);
+			// exit();
+		}
+
+		
 		// Redirect output to a client’s web browser (Excel5)
 		header( 'Content-Type: application/vnd.ms-excel' );
 		header( 'Content-Disposition: attachment;filename="'.$_fileName.'.xls"' );
