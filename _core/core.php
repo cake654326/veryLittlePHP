@@ -17,7 +17,7 @@
 # 2013/01/10 AM11:02 v1.2.3 : [cx] 更新 loadMod ,向下相容 提供自動初始化
 # 2013/07/   AM  :   v1.3.0 : [cx] 修正許多BUG
 # 2013/08/15 PM  :   v1.3.1 : [cx] 修正 _cx_init_object() 路徑載入BUG
-# 
+# 2013/08/15 PM  :   v1.3.9 : [cx] 增加 sql 記錄
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -42,8 +42,19 @@
 #@設定絕對路徑 ,可由設定檔 或者 路由會自動取得
 # setBaseUrl( $_url )                    
 #
+#@取得絕對路徑，並且提供後綴網址以及網址title
+# getBaseUrl( $_affter_url = '-1', $_use_title = false , $_CONTROLLER = TRUE )
+# @_affter_url : 加載後面網址
+# @_CONTROLLER : MVC OR ....
+# @_use_title  : 是否使用自定網址開頭(true and false in your config =>base_http_title: http or https )
+# 			+ 預設不會使用 自定開頭
+# 
+# 
 #@取得 絕對路徑
-# getUrl()                               
+# getUrl( $_use_title = true )                              
+# @_use_title  : 是否使用自定網址開頭(true and false in your config =>base_http_title: http or https )
+# 			+ 預設不會使用 自定開頭
+#
 #
 #@CORE端載入樣板(已經自動宣告樣板物件)
 # loadView( $_path, $_arr, $_b  = true )
@@ -75,7 +86,7 @@
 # --------------------------------------------------------
 **/
 class core { 
-	var $version       = "1.3.8-2";
+	var $version       = "1.4.0";
 	var $mConfig       = array();
 	var $mConn         = null;//舊版 - 單一載入 opensql.php
 	var $mAdodb        = array();//新版 - config.php - CXDATABASE
@@ -100,6 +111,8 @@ class core {
 	var $aDebugLog = array();//[實驗] DEBUG訊息
 
 	var $sDebugLog = '';//[實驗] 暫存DEBUG訊息
+
+	var $aSqlLog = array();
 
 
 	public function __construct(  ) {
@@ -202,12 +215,35 @@ class core {
 		return $this->sActionName;
 	}
 
-	public function getBaseUrl(){
-		return $this->mBaseUrl;
+	/***
+	 * getBaseUrl( $_affter_url = '-1', $_use_title = false , $_CONTROLLER = TRUE )
+	 * @_affter_url : 加載後面網址
+	 * @_CONTROLLER : MVC OR ....
+	 * @_use_title  : 是否使用自定網址開頭(true and false in your config =>base_http_title: http or https )
+	 * 			+ 預設不會使用 自定開頭
+	 */
+	public function getBaseUrl( $_affter_url = '-1' , $_CONTROLLER = TRUE , $_use_title = false  ){
+		$_title_url = $this->getUrl( $_use_title );
+
+		if( $_affter_url == '-1' ){
+			return $this->mBaseUrl;
+		}
+
+		($_CONTROLLER == true ) and $_title_url .= $this->config("INDEX") . "/" ;
+		return $_title_url . $_affter_url;
+		// return $this->mBaseUrl;
 	}
 
-	public function getUrl(){
-		return $this->config( 'base_http_title' ) . $this->getBaseUrl();
+
+	/*
+	 * 預設會使用自定(your config) base_http_title 開頭
+	 * @_use_title  : 是否使用自定網址開頭(true and false in your config =>base_http_title: http or https )
+	 **/
+	public function getUrl( $_use_title = true ){
+		if ( $_use_title  ){
+			return $this->config( 'base_http_title' ) . $this->mBaseUrl;
+		}
+		return  $this->mBaseUrl;
 	}
 
 	public function loadView( $_path, $_arr, $_b = true ) {
@@ -357,6 +393,7 @@ class core {
 	}
 
 	public function getDB( $_cx_database_name = false ) {
+
 		if($_cx_database_name == false){
 			return $this->mConn;
 		}
@@ -445,9 +482,29 @@ class core {
 	 * 對於GET 做 addslashes 以及 trim
 	 * ***/
 	function getValueBaseCheck() {
-
 		return $this->mGet;
 	}
+
+	// 設定 SQL LOG 
+	public function setSqlLog( $_TYPE ,  $_INFO ,$_MOD , $_MSG , $_SQL , $_TIME ){
+		//aSqlLog
+		$this->aSqlLog[] = array(
+			'TYPE' => $_TYPE ,
+			'INFO' => $_INFO,
+			'MOD' => $_MOD,
+			'MSG' => $_MSG,
+			'SQL' => $_SQL,
+			'TIME'=> $_TIME
+			);
+		return $this;
+		
+	}
+
+	// 取得SQL 記錄
+	public function getSqlLog(){
+		return $this->aSqlLog;
+	}
+
 
 	function is_debug() {
 		if ( defined( 'CXDEBUG' ) ) {
@@ -460,8 +517,6 @@ class core {
 		}
 		return false;
 	}
-
-
 
 	private $sDebugLevel;
 	private $sDebugTitle;
@@ -644,4 +699,6 @@ class core {
 
 
 }
+
+
 ?>

@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.3.8-4
+*  @version     1.4.0
 
 ### Summary
 	This is a small framework to support the "ADODB",
@@ -42,13 +42,17 @@
 	2. core/init.php 實做建立是否初始化連線
 *  2013 10 08
 	1. 修正 IE10 的big5亂碼下載問題
+*  2013 11 15
+	1. 增加 sql log 記錄序列
+	2. 絕對路徑網址 函數修正
+
 ### updateTime
 *  2013 09 12 - v1.3.6 
 *  2013 09 24 - v1.3.7
 *  2013 10 08 - v1.3.8
 *  2013 10 17 - v1.3.8-2
 *  2013 10 22 - v1.3.8-4
-
+*  2013 11 15 - v1.4.0
 
 
 
