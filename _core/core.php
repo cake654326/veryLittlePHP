@@ -17,7 +17,8 @@
 # 2013/01/10 AM11:02 v1.2.3 : [cx] 更新 loadMod ,向下相容 提供自動初始化
 # 2013/07/   AM  :   v1.3.0 : [cx] 修正許多BUG
 # 2013/08/15 PM  :   v1.3.1 : [cx] 修正 _cx_init_object() 路徑載入BUG
-# 2013/08/15 PM  :   v1.3.9 : [cx] 增加 sql 記錄
+# 2013/11/15 PM  :   v1.3.9 : [cx] 增加 sql 記錄
+# 2013/11/15 PM  :   v1.4.0 : [cx] 增強URL 功能
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -86,7 +87,7 @@
 # --------------------------------------------------------
 **/
 class core { 
-	var $version       = "1.4.0";
+	var $version       = "1.4.0-1";
 	var $mConfig       = array();
 	var $mConn         = null;//舊版 - 單一載入 opensql.php
 	var $mAdodb        = array();//新版 - config.php - CXDATABASE
@@ -140,6 +141,12 @@ class core {
 		$this->loadSysLib('cx_log');
 		$this->loadSysLib('cxAdodb');
 		$this->mLog = new cx_log();
+
+		//取得 http title
+		if( !$this->config("base_http_title" ) ){
+			$base_http_title =(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https://" : "http://";
+			$this->setConfig("base_http_title" , $base_http_title );
+		}
 
 		return $this;
 	}
