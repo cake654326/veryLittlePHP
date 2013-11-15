@@ -29,7 +29,7 @@
 	- @_file_name : 下載檔名
 	- @_reportData : 資料來源
 
-### 來源範例
+### DB讀出資料 範例 $_reportData
 ```php
 	Array
 	(
@@ -48,6 +48,8 @@
 	            [user_s_contract] => JEFF
 	            [user_s_c_title] => RD 
 	        )
+....
+
 ```
 
 ### 用法
@@ -78,9 +80,13 @@
 	
 	//設定下載的群組
 	$this->mCore->mExcel->setGroupKey("A1");
-	//載入資料
+
+	// ---- 載入資料並下載 ---- 
+	//to csv
 	$this->mCore->mExcel->outputCsv($_file_name ,$_reportData);
 
+	//to excel
+	$this->mCore->mExcel->outputExcel($_file_name ,$_reportData);
 
 ``` 
 

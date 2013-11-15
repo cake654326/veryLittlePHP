@@ -23,6 +23,18 @@ class mainController extends baseController
 		echo "demo index";
 		print_cx( $aUrl );
 	}
+
+	public function test(){
+
+		$this->mCore->loadMod("mod_xBasic",true,"mBasic");
+		$_data = $this->mCore->mBasic->finds("Serial < ? " , array( 100 ) );
+
+		$_data = $this->mCore->mBasic->finds("Serial < ? " , array( 20 ) );
+		//顯示sql 記錄
+		print_cx( $this->mCore->getSqlLog()  );
+
+
+	}
 	
 	public function dbAction( $aUrl ){
 		$mDb = new cx_db("Report_DB");

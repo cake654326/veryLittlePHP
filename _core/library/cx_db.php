@@ -38,6 +38,8 @@
 
 # 2013/09/24 Core v1.3.7(DB-v1.2.5)   : [cx]  insertMultiple($_table,$_datafield,$_data ) insert 多筆
 
+# 2013/11/15 Core v1.3.9(DB-v1.2.6):[cx] 增加 log 記錄器
+
 # --------------------------------------------------------
 #「Function」(常用)
 #
@@ -56,6 +58,10 @@ class cx_db {
 	var $mDrives_keyName = '';//mysql: Field ,mssql:COLUMN_NAME
 	var $bAutoAddN = true;//即將廢除
 	var $bAutoSetUseCX = true;//是否使用自身 autoSave 解析器
+
+	var $bSaveSqlLog = true;//是否自動記錄SQL //debug 記錄檔案用變數 type
+	var $sTitle = '';//sql 註解 //debug 記錄檔案用變數 type
+	var $sTYPE = '';//INSERT UPDATE DELETE OR ELSE //debug 記錄檔案用變數 type
 
 	public function __construct( $_conn = null ) {
 		//parent::__construct();
@@ -76,7 +82,7 @@ class cx_db {
 					$_c = $Core->getDB($_db_name);
 
 					if($_c != false){
-						// echo "<br/>!false<br/>";
+						//echo "<br/>!false<br/>";
 						$_conn = &$_c;
 					}else{
 						$_conn = $Core->getDB();
@@ -94,7 +100,7 @@ class cx_db {
 
 		
 		$this->mConn = &$_conn;
-		// print_cx($_conn);exit();
+		// print_cx( $this->mConn );exit();
 	}
 	public function setDrives($_sqlDrives='ado_mssql'){
 		//or mysql ado_mssql
@@ -110,8 +116,30 @@ class cx_db {
 	}
 
 	public function setTitle( $_str ) {
+		$this->sTitle = $_str;
 		$this->mConn->setCxTitle( $_str );
 		return true;
+	}
+
+	public function getTitle(){
+		return $this->sTitle;
+	}
+	public function cleanTitle(){
+		$this->sTitle = '';
+		return true;
+	}
+
+	//debug 記錄檔案用變數 type
+	public function setTYPE( $_type ){
+		$this->sTYPE = $_type;
+		return $this;
+	}
+	public function getTYPE(){
+		return $this->sTYPE;
+	}
+	public function cleanType(){
+		$this->sTYPE = '';
+		return $this;
 	}
 
 	public function setTable( $_table ) {
@@ -131,9 +159,7 @@ class cx_db {
 		return $this->getCount();
 	}
 	public function getCount() {
-		//echo "c:" . $this->mRs->RecordCount();
 		if( !$this->mRs ) return false;
-
 		return $this->mRs->RecordCount();
 	}
 
@@ -162,14 +188,18 @@ class cx_db {
 	 * 使 EXECUTE 回傳 this
 	 ***/
 	public function sqlExec($_sql,$_arr){
+
+		if($this->getTYPE() == ''){
+			$this->setTYPE("sqlExec");
+		}
+
 		$this->Execute($_sql,$_arr);
-		//print_cx($this->mRs );
 		return $this;
 	}
 
 
 
-	function qstr($s,$magic_quotes=false)
+	public function qstr($s,$magic_quotes=false)
 	{	
 		if (!$magic_quotes) {
 		
@@ -192,7 +222,8 @@ class cx_db {
 		}
 	}
 
-	public function mssqlArrayFormatter( $inputarr = false){
+	public function mssqlArrayFormatter( $inputarr = false)
+	{
 		if( $inputarr ){
 			foreach( $inputarr as $k => $v) {
 				if (is_string($v)) {
@@ -223,22 +254,33 @@ class cx_db {
 				$i += 1;
 			}
 		}
-		
-			
-// echo "<br/>p:";
-// print_r($params);
-// echo "<br/>d:";
-// print_r($decl);
-// echo "<br/>".$decl;
-
 		return $params;
+	}
+
+	//if (is_object($theObject) && (count(get_object_vars($theObject)) > 0)) //check object
+
+	private function fnSaveLog( $_isOK = true ){
+		// exit();
+		$_info = 'OK';
+		( !$_isOK) and $_info = "ERROR";
+
+		$sTempSql = $this->mConn->getCxSql();
+		$sCx_title = $this->getTitle();
+		$this->cleanTitle();
+
+		$sModelName = get_class($this);
+		$this->mCore->setSqlLog($this->sTYPE ,$_info,$sModelName ,$sCx_title,$sTempSql,date("Y-m-d H:m:s") );
+		return true;
 	}
 
 	/**
 	 * 簡化 execute 長度
 	 * 并且建立錯誤簡化 ADODB
 	 * **/
-	public function Execute( $_sql, $inputarr = false ) {
+	public function Execute( $_sql, $inputarr = false  ) {
+		if($this->getTYPE() == ''){
+			$this->setTYPE("Execute");
+		}
 		$params = array();
 		$decl = array();
 		if($inputarr){
@@ -246,22 +288,26 @@ class cx_db {
 		}
 
 		$this->mRs  = $this->mConn->Execute( $_sql , $params );
+		
 		if ( !$this->mRs  ) {
+			$sInfo = "ERROR";
+
 			$_error = $this->getError();
 			$_msg = "CX_DB Execute Error:" . $_error ;
-
 			//show log
 			$this->mCore->log( $_msg , "DB_".date( 'YmdH' ).".txt" ); //bug
 			$this->mCore->systemLog( $_msg  );
-
 			$this->setTitle( $_msg );
+			$this->fnSaveLog( false );
 			return false;
 		}
+		$this->fnSaveLog(true);
 		return $this->mRs;
 	}
 
 	public function selectPkCount( $_table, $_pk_val, $_pk_key = "id" ) {
 		$this->mConn->setCxTitle( "cx_db selectPK " );
+		$this->setTYPE("SELECT");
 		$_sql = "Select ". $_pk_key . " from " . $_table . " Where " . $_pk_key . "=?";
 		$_rs = $this->Execute( $_sql, array( $_pk_val ) );
 		if ( !$_rs )return false;
@@ -293,7 +339,7 @@ class cx_db {
 		return $_rs;
 	}
 
-//mDrives
+
 	public function getDescribe( $_table_name = null ){
 		/*
 			mssql : exec sp_columns $tablename;
@@ -328,13 +374,10 @@ class cx_db {
 
 	public function checkTableArray($_table,$_input_arr){
 		// 自動化 ARRAY檢查
-		
-		//exec sp_columns Tb_EndUser
+
 		$_tb = $this->getDescribe($_table);
-// print_cx($_tb);
+
 		$this->mConn->setCxTitle( "cx_db checkTableArray: " .$_table);
-		// $_sql = "exec sp_columns " . $_table;
-		// $_tb = $this->sqlExec($_sql,array())->getArray();
 
 		$_output_arr = array();
 
@@ -345,12 +388,10 @@ class cx_db {
 		}
 
 		if(count($_output_arr) == 0){
-			// error_log("count($_output_arr) is 0", 3, "../_log/db.log");
 			return false;
 		}
 
-		// print_cx($_output_arr);
-		// exit(0);
+
 		return $_output_arr;
 	}
 
@@ -399,7 +440,7 @@ class cx_db {
 
 		switch($kSave_type){
 			case "UPDATE":
-
+				$this->setTYPE("UPDATE");
 				if ( array_key_exists( $_pk_key, $_inputarr ) ) {
 					unset( $_inputarr[$_pk_key] );
 					if(count($_inputarr) == 0)return false;
@@ -417,12 +458,18 @@ class cx_db {
 					$_rs = $this->Execute( $_auto_sql , $_update_data );
 
 				}else{
+
 					$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "UPDATE", $_where );
+					if($_rs == false){
+						$this->fnSaveLog( false );
+					}
+					$this->fnSaveLog( true );
 				}
 				
 			break;
 			
 			case "INSERT":
+			$this->setTYPE("INSERT");
 			if($this->mDrives == 'pdo_mssql' or $this->bAutoSetUseCX == true){
 				$_insert_set = array();
 				$_insert_val = array();
@@ -439,6 +486,10 @@ class cx_db {
 			}else{
 				//INSERT INTO temp ( DATA, TIME, NAME ) VALUES ( ?, ?, ? )
 				$_rs = $this->mConn->AutoExecute( $_table, $_inputarr, "INSERT" );
+				if($_rs == false){
+						$this->fnSaveLog( false );
+					}
+				$this->fnSaveLog( true );
 			}
 			
 			break;
@@ -461,8 +512,14 @@ class cx_db {
 	 * @_offset   筆數開頭
 	 */
 	public function selectLimit($_sql , $_numlist, $_offset ,$_arr = array() ){
+		$this->setTYPE("selectLimit");
 		$this->mRs  = $this->mConn->SelectLimit( $_sql, $_numlist, $_offset ,$_arr );
-		if( !$this->mRs ) return false;
+
+		if( !$this->mRs ){
+			$this->fnSaveLog( false );
+			return false;
+		} 
+		$this->fnSaveLog( true );
 		return $this;
 	}
 
@@ -477,6 +534,7 @@ class cx_db {
 	 *
 	 ***/
 	public function insertMultiple($_table,$_datafield,$_data ){
+		$this->setTYPE("insertMultiple");
 		$insert_values  = array();
 		$question_marks = array();
 		foreach($_data as $d){
@@ -508,6 +566,8 @@ class cx_db {
 
 	    return implode($separator, $result);
 	}
+
+
 
 }
 
