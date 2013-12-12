@@ -645,7 +645,9 @@ function pagination_array( $array, $page = 1, $link_prefix = false, $link_suffix
 
 ***/
 
-function cx_pagination_array( $array, $page = 1, $link_prefix = false, $link_suffix = false, $limit_page = 20, $limit_number = 10 ) {
+function cx_pagination_array( 
+    $array, $page = 1, $link_prefix = false, $link_suffix = false, $limit_page = 20, $limit_number = 10 ) 
+{
     if ( empty( $page ) or !$limit_page ) $page = 1;
 //print_cx($array);
     $num_rows = count( $array );

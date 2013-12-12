@@ -127,7 +127,7 @@ function __autoload($class_name)
   {
       $filename = strtolower($class_name) .'.php';
       // $file = site_path .'classes' .DIRECTORY_SEPARATOR .$filename;
-       $file = "_base/" . $filename;
+       $file = "_auto/" . $filename;
       if(!file_exists($file))
       {
           return false;

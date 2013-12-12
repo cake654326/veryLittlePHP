@@ -305,7 +305,7 @@ class core {
 
 //load help function
 	public function loadHelp( $_name ) {
-		if ( !in_array( $_name, $this->mSysLib ) ) {
+		if ( !in_array( $_name, $this->mHelpFunc ) ) {
 			$_path = $this->config( 'sysFile_path' ).
 				$this->config( 'sysHelp_path' ) .
 				'/'.$_name.'_helper.php';

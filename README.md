@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.4.0
+*  @version     1.4.1
 
 ### Summary
 	This is a small framework to support the "ADODB",
@@ -45,6 +45,8 @@
 *  2013 11 15
 	1. 增加 sql log 記錄序列
 	2. 絕對路徑網址 函數修正
+*  2013 12 12
+	1. 修正 loadHelp bug
 
 ### updateTime
 *  2013 09 12 - v1.3.6 
@@ -53,6 +55,7 @@
 *  2013 10 17 - v1.3.8-2
 *  2013 10 22 - v1.3.8-4
 *  2013 11 15 - v1.4.0
+*  2013 12 12 - v1.4.1
 
 
 

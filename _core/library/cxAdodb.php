@@ -15,25 +15,26 @@ class cxAdodb{
 			break;
 			case "adoMssql":
 			case "ado_mssql":
-				$DB['conn'] = &self::linkAdoMssql($_config);
+				$DB['conn'] = self::linkAdoMssql($_config);
 			break;
 			case "pdoMssql":
 			case "pdo_mssql":
-				$DB['conn'] = &self::linkPdoMysql($_config);
+				$DB['conn'] = self::linkPdoMysql($_config);
 			break;
 			case "pdoOdbcMssql":
 			case "pdo_odbc_mssql":
-				$DB['conn'] = &self::linkPdoOdbcMssql($_config);
+				$DB['conn'] = self::linkPdoOdbcMssql($_config);
 			break;
 			// case "mssql":
-			// 	// $DB['conn'] = &self::linXxxxx($_config);
+			// 	// $DB['conn'] = self::linXxxxx($_config);
 			// break;
 			case "mysql":
-				$DB['conn'] = &self::linkMysql($_config);
+				$DB['conn'] = self::linkMysql($_config);
 			break;
 			case "pdoMysql":
 			case "pdo_mysql":
-				$DB['conn'] = &self::linkPdoMysql($_config);
+			// print_cx($_config);exit();
+				$DB['conn'] = self::linkPdoMysql($_config);
 			break;
 			// case "pdo_odbc_mysql":
 				//尚未實做
@@ -65,7 +66,12 @@ class cxAdodb{
 		$db = null;
 		$db = ADONewConnection("mysql"); 
 		@$db->charPage=65001;
-		$db->PConnect($_config['Host'], $_config['User'], $_config['Password'], $_config['Database'] );
+		$_isok = $db->PConnect($_config['Host'], $_config['User'], $_config['Password'], $_config['Database'] );
+		if(!$_isok){
+			echo $db->ErrorMsg();
+			die("link DB Error!");
+			exit();
+		}
 		return $db;
 	}
 
@@ -76,7 +82,12 @@ class cxAdodb{
 				.";UID=".$_config['User'].";PWD=".$_config['Password'].";"; 
 		$db = ADONewConnection("ado_mssql"); 
 		@$db->charPage=65001;
-		$db->Connect($dsn);
+		$_isok = $db->Connect($dsn);
+		if(!$_isok){
+			echo $db->ErrorMsg();
+			die("link DB Error!");
+		}
+		
 		return $db;
 
 	}
@@ -101,6 +112,7 @@ class cxAdodb{
 		$db =NewADOConnection('pdo');
 		//$dsn = 'sqlsrv:Server=172.16.44.209;Database=CAP_JHSV2'; 
 		$db->Connect('sqlsrv:Server='.$_config['Host'],$_config['User'],$_config['Password'], $_config['Database']);
+		// $this->mConn->ErrorMsg();
 		return $db;
 	}
 
