@@ -4,6 +4,21 @@ class lib_excel extends cx_lib {
 	var $aRule;
 	var $objPHPExcel;
 	var $_nowGroupKey;
+
+	//--- libxl
+
+	/* @$_locale 
+	 * windows = cht ,chs ...
+	 * linux or mac or unix = zh_TW.UTF-8 OR ....
+	 **/
+	var $sLocale = "cht" ; 
+
+	/* @$_iconv
+	 * is windows set  array('UTF-8' , 'BIG5' ) else set false
+	 **/
+	var $sIconv = array('UTF-8' , 'BIG5' );
+
+
 	public function __construct(  ) {
 		parent::__construct( null );
 		//$this->mConn
@@ -13,55 +28,6 @@ class lib_excel extends cx_lib {
 		$this->_nowGroupKey = "default";
 
 	}
-
-
-	// ===== Input Function =======
-	public function load( $_file_path ,$importCells=null){
-		// $objPHPExcel = PHPExcel_IOFactory::load($_FILES['empData']['tmp_name']);
-		$obj = PHPExcel_IOFactory::load( $_file_path );
-
-		$_title_io = true;
-		if($importCells == null){
-			//標題欄位名稱
-			$_title_io = false;
-		}
-		
-		$objPHPExcel;
-		try {
-		    $objPHPExcel = PHPExcel_IOFactory::load($_file_path);
-		} catch (Exception $e) {
-		    // die('Error loading file: ' . $e->getMessage());
-		    return false;
-		}
-
-		$objWorksheet = $objPHPExcel->getActiveSheet();
-
-		$data = array();
-		foreach ($objWorksheet->getRowIterator() as $row)
-		{
-			$cellIterator = $row->getCellIterator();
-			// $cellIterator->setIterateOnlyExistingCells(true);
-			$cellIterator->setIterateOnlyExistingCells(false);//所有欄位
-			$rowdata = array();
-			foreach ($cellIterator as $i => $cell)
-			{
-				//echo "<br/>i:".$i." ,".  $importCells[$i] . " => " . $cell;
-				if($_title_io == true){
-					if (isset($importCells[$i])) $rowdata[$importCells[$i]] = $cell->getValue();
-				}else{
-					$rowdata[$i] = $cell->getValue();
-				}
-				
-			}
-		    $data[] = $rowdata;
-		}
-
-		return $data;
-
-	}
-
-
-	// ===== Output Function =======
 
 	public function setGroupKey( $_group ){
 		$this->_nowGroupKey = $_group;
@@ -76,6 +42,8 @@ class lib_excel extends cx_lib {
 
 		return $this;
 	}
+	
+
 
 	public function outputExcel($_fileName  ,$_aData, $_aRule = false,$_Category = "report"){
 		if($_aRule == false){
@@ -100,17 +68,17 @@ class lib_excel extends cx_lib {
 			$_aRule = $this->aRule[$this->_nowGroupKey];
 		}
 
-				//處理 IE 問題
+
+		//處理 IE 問題
 		if ( 
-			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" )
+			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" ) !== FALSE
 			or 
-			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" )
-			){
+			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" ) !== FALSE
+			)
+		{
 
 			$_fileName = iconv('utf-8', 'big5', $_fileName);
-			// exit();
 		}
-
 
 		// $fp = fopen('php://stdout','wb');
 		header("Content-type: text/csv");
@@ -173,6 +141,96 @@ class lib_excel extends cx_lib {
 
 	}
 
+	public function outputLibxl(
+				$_fileName  ,
+				$_aData, 
+				$_aRule = false,
+				$_Category = "report"
+				){
+
+		$mBook = new ExcelBook();
+		$mBook->setLocale( $this->sLocale );
+		$mSheet = $mBook->addSheet( 'report' );
+
+		if($_aRule == false){
+			$_aRule = $this->aRule[$this->_nowGroupKey];
+		}
+
+		$_x = 0;
+		foreach ( (array)$_aRule as $_val ) {
+			$_title = '';
+			if( $this->sIconv != false ){
+				$_title = $_val['title'];
+				//mb_convert_encoding( $_title  , "BIG5" , "UTF-8"); 
+				$_title = iconv("UTF-8", "big5//TRANSLIT//IGNORE", $_val['title']);
+				//$_title =  iconv('UTF-8' , 'BIG5' , $_val['title'] );
+			}
+
+			$mSheet->write(0, $_x, $_title  );
+
+			// $this->objPHPExcel->getActiveSheet()
+			// 		->setCellValueByColumnAndRow( $_x , 1
+			// 			, $_title , PHPExcel_Cell_DataType::TYPE_STRING );
+			$_x++;
+		}
+
+
+		$_x = 0;
+		$_y = 1;
+		foreach ( (array)$_aData as $_d ) {
+			foreach ( (array)$_aRule as $_key=> $_val ) {
+				// $this->objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow( $_x, $_y, $_d[$_key] ,PHPExcel_Cell_DataType::TYPE_STRING);
+				$_data_val = '';
+				if( $this->sIconv != false ){
+				
+					
+					//600mb
+					//$_data_val = mb_convert_encoding( $_d[$_key ] , "BIG5" , "UTF-8");
+					
+					$_data_val = iconv("UTF-8", "big5//TRANSLIT//IGNORE", $_d[$_key ] );
+					
+					//600mb
+					//$_data_val =  iconv('UTF-8' , 'BIG5' , $_d[$_key] );
+					
+					//$_data_val =  $_d[$_key];
+				}
+
+				$mSheet->write($_y, $_x, $_data_val  );
+
+				// $this->objPHPExcel->getActiveSheet()
+				// ->getCellByColumnAndRow( $_x, $_y )
+				// ->setValueExplicit( $_d[$_key], PHPExcel_Cell_DataType::TYPE_STRING );
+
+				$_x++;
+			}
+			$_x = 0;
+			$_y++;
+		}
+
+		$file = tempnam('/tmp', 'excel');
+		$mBook->save($file);
+		
+		//處理 IE 問題
+		if ( 
+			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" )
+			or 
+			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" )
+			){
+
+			$_fileName = iconv('utf-8', 'big5', $_fileName);
+			// exit();
+		}
+
+		header('Content-Type: application/vnd.ms-excel');  
+		header('Content-Disposition: attachment;filename="'.$_fileName.'.xls"');  
+		header('Cache-Control: max-age=0');   
+		readfile($file);
+		unlink($file);
+
+	
+	}
+
+
 	private function _outputExcel($_fileName , $_aRule, $_aData ,$_Category = "report"){
 		// echo $_fileName;
 		$this->mCore->loadLib("excel/PHPExcel",false);
@@ -213,6 +271,8 @@ class lib_excel extends cx_lib {
 
 		$this->objPHPExcel->setActiveSheetIndex( 0 );
 
+
+
 		//處理 IE 問題
 		if ( 
 			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" )
@@ -224,7 +284,6 @@ class lib_excel extends cx_lib {
 			// exit();
 		}
 
-		
 		// Redirect output to a client’s web browser (Excel5)
 		header( 'Content-Type: application/vnd.ms-excel' );
 		header( 'Content-Disposition: attachment;filename="'.$_fileName.'.xls"' );

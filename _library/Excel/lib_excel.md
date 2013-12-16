@@ -12,7 +12,8 @@
 * ***time: 2013-08/19*** version: 0.1
 * ***time: 2013-09/24*** version: 0.2
 	* ***增加讀取excel函數***
-
+* ***time: 2013-09/24*** version: 0.3
+	* ***增加 支援 Libxl ***
 ### 用途
 1. 簡化建立excel csv 功能
 2. 整合ADODB 輸出直接使用
@@ -28,6 +29,8 @@
 3. outputExcel( $_file_name , $_reportData )
 	- @_file_name : 下載檔名
 	- @_reportData : 資料來源
+4. outputCsv
+5. outputLibxl 
 
 ### DB讀出資料 範例 $_reportData
 ```php
