@@ -87,7 +87,7 @@
 # --------------------------------------------------------
 **/
 class core { 
-	var $version       = "1.4.2";
+	var $version       = "1.4.3";
 	var $mConfig       = array();
 	var $mConn         = null;//舊版 - 單一載入 opensql.php
 	var $mAdodb        = array();//新版 - config.php - CXDATABASE

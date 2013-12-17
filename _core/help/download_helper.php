@@ -5,16 +5,17 @@ if ( ! function_exists( 'force_download' ) )
 
 	function force_download( $filename = '', $data = '', $is_file = true )
 	{
-		if (!is_file($data)) { die("<b>404 File not found!</b>"); }
+		// if (!is_file($data)) { die("<b>404 File not found!</b>"); }
 	
 		if ( $filename == '' or $data == '' )
 		{
 			return FALSE;
 		}
 
-		if( $is_file && !is_file( $data ) ){
-			return FALSE;
-		}
+		//讀取檔案轉為下載 限制
+		// if( $is_file && !is_file( $data ) ){
+		// 	return FALSE;
+		// }
 
 		// Try to determine if the filename includes a file extension.
 		// We need it in order to set the MIME type
