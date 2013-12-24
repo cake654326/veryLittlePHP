@@ -40,10 +40,12 @@
 
 # 2013/11/15 Core v1.3.9(DB-v1.2.6):[cx] 增加 log 記錄器
 
+# 2013/12/24 Core v1.4.4(DB-v1.2.8)   : [cx] 修正 insertMultiple 函數(增加自動分批功能)
+
 # --------------------------------------------------------
 #「Function」(常用)
 #
-#
+# insertMultiple($_table,$_datafield,$_data ,$_insert_max = 800 )
 #
 **/
 
@@ -531,29 +533,70 @@ class cx_db {
 	 * @table 表
 	 * @datafield 欄位名稱
 	 * @data 資料串列
+	 * @_insert_max 輸入最預設最大值
 	 *
 	 ***/
-	public function insertMultiple($_table,$_datafield,$_data ){
-		$this->setTYPE("insertMultiple");
+	public function insertMultiple($_table,$_datafield,$_data ,$_insert_max = 800 ){
+		$is_ok = true;
+		$insert_Max = $_insert_max ;
+		$insert_index = 0;
+
 		$insert_values  = array();
 		$question_marks = array();
+
 		foreach($_data as $d){
 			$question_marks[] = '('  . $this->placeholders('?', sizeof($d)) . ')';
-			$insert_values = array_merge($insert_values, array_values($d));
+			//$insert_values = array_merge($insert_values, array_values($d) );//is slow
+			foreach( array_values($d) as $__insert_val ){
+				$insert_values[] = $__insert_val;
+			}
+			
+			//--------------------------------
+			$insert_index++;
+			if($insert_index > $insert_Max ){
+
+				//insert 
+				// $sql = " INSERT INTO " .
+				// 	$_table . " (" . implode(",", array_keys($_datafield) ) . ") VALUES " . 
+				// 	implode(',', $question_marks);
+
+				// $_ok = $this->Execute( $sql , $insert_values );
+				$_ok = $this->_insert_values($_table , $_datafield , $question_marks ,$insert_values);
+
+				$insert_values  = array();
+				$question_marks = array();
+				$insert_index = 0;
+				($_ok == false) and $is_ok = false;
+			}
+			//--------------------------------
+
 		}
-		$sql = " INSERT INTO " .
-				$_table . " (" . implode(",", array_keys($_datafield) ) . ") VALUES " . 
-				implode(',', $question_marks);
+
+		if($insert_index != 0){
+			$_ok = $this->_insert_values($_table , $_datafield , $question_marks ,$insert_values);
+			($_ok == false) and $is_ok = false;
+		}
+
 		// $sql = " INSERT INTO " .
-		// 		$_table . " (" . implode(",", $_datafield ) . ") VALUES " . 
+		// 		$_table . " (" . implode(",", array_keys($_datafield) ) . ") VALUES " . 
 		// 		implode(',', $question_marks);
 
 
 		// echo $sql;
-		// print_cx($insert_values);
-		return $this->Execute( $sql , $insert_values );
+// print_cx($question_marks);			
+// print_cx($insert_values);
+// exit();
+		return $is_ok;
 		// exit();
 
+	}
+
+	private function _insert_values($_table , $_datafield , $question_marks ,$insert_values){
+		$sql = " INSERT INTO " .
+					$_table . " (" . implode(",", array_keys($_datafield) ) . ") VALUES " . 
+					implode(',', $question_marks);
+
+		return $this->Execute( $sql , $insert_values );
 	}
 
 	private function placeholders($text, $count=0, $separator=","){

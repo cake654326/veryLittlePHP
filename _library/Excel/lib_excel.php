@@ -29,6 +29,111 @@ class lib_excel extends cx_lib {
 
 	}
 
+
+	// ===== Input Function =======
+
+	//PHPExcel
+	public function load( $_file_path ,$importCells=null){
+		// $objPHPExcel = PHPExcel_IOFactory::load($_FILES['empData']['tmp_name']);
+
+		$_title_io = true;
+		if($importCells == null){
+			//標題欄位名稱
+			$_title_io = false;
+		}
+		
+		$objPHPExcel;
+		try {
+		    $objPHPExcel = PHPExcel_IOFactory::load($_file_path);
+		} catch (Exception $e) {
+		    // die('Error loading file: ' . $e->getMessage());
+		    return false;
+		}
+
+		$objWorksheet = $objPHPExcel->getActiveSheet();
+
+		$data = array();
+		foreach ($objWorksheet->getRowIterator() as $row)
+		{
+			$cellIterator = $row->getCellIterator();
+			// $cellIterator->setIterateOnlyExistingCells(true);
+			$cellIterator->setIterateOnlyExistingCells(false);//所有欄位
+			$rowdata = array();
+			foreach ($cellIterator as $i => $cell)
+			{
+				//echo "<br/>i:".$i." ,".  $importCells[$i] . " => " . $cell;
+				if($_title_io == true){
+					if (isset($importCells[$i])) $rowdata[$importCells[$i]] = $cell->getValue();
+				}else{
+					$rowdata[$i] = $cell->getValue();
+				}
+				
+			}
+		    $data[] = $rowdata;
+		}
+
+		return $data;
+
+	}
+
+	//libxl
+	public function libxlLoad( $_file_path ,$importCells=null){
+		// $objPHPExcel = PHPExcel_IOFactory::load($_FILES['empData']['tmp_name']);
+		// $obj = PHPExcel_IOFactory::load( $_file_path );
+
+		$mBook = new ExcelBook();
+		// $mBook->setLocale( $this->sLocale );
+		
+
+		$_title_io = true;
+		if($importCells == null){
+			//標題欄位名稱
+			$_title_io = false;
+		}
+		
+		// $objPHPExcel;
+		try {
+			$mBook->loadFile( $_file_path );
+		    // $objPHPExcel = PHPExcel_IOFactory::load($_file_path);
+		} catch (Exception $e) {
+		    // die('Error loading file: ' . $e->getMessage());
+		    return false;
+		}
+
+		$mSheet = $mBook->getSheet( );
+		// $objWorksheet = $objPHPExcel->getActiveSheet();
+
+		$data = array();
+		for( $row_index = 0 , $e = $mSheet->lastRow(); $row_index < $e ;$row_index++ )
+		{
+
+  			$_row_data = $mSheet->readRow($row_index) ;
+			$cellIterator = $mSheet->readRow($row_index) ;
+			$rowdata = array();
+			foreach ($cellIterator as $i => $cell)
+			{
+				// echo "i:" . $i . " :" . $cell . "<br/>";
+				$cell_big5 = iconv("big5", "UTF-8//TRANSLIT//IGNORE", $cell );
+				if($_title_io == true){
+					if (isset($importCells[$i])) $rowdata[$importCells[$i]] = $cell_big5;
+				}else{
+					$rowdata[$i] = $cell_big5;
+				}
+				
+			}
+		    $data[] = $rowdata;
+
+
+		}
+
+
+		return $data;
+
+	}
+
+
+	// ===== Output Function =======
+
 	public function setGroupKey( $_group ){
 		$this->_nowGroupKey = $_group;
 		return $this;

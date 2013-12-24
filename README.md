@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.4.3
+*  @version     1.4.4
 
 ### Summary
 	This is a small framework to support the "ADODB",
@@ -52,6 +52,9 @@
 *  2013 12 17 - v1.4.3
 	1. 修正 download_helper 支援 資料串
 	2. 移植 CI_Zip 物件
+*  2013 12 24 - v1.4.4
+	1. 修正 cx_db 大量INSERT函數 無分批問題
+	2. lib_excel 增加 libxlLoad
 
 ### updateTime
 *  2013 09 12 - v1.3.6 
@@ -63,5 +66,5 @@
 *  2013 12 12 - v1.4.1
 *  2013 12 16 - v1.4.2
 *  2013 12 17 - v1.4.3
-
+*  2013 12 24 - v1.4.4
 

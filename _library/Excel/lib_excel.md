@@ -3,6 +3,8 @@
 ### 依附版本
 * CORE v1.3.6 => version: 0.1
 * CORE v1.3.7 => version: 0.2
+* CORE v1.4.3 => version: 0.3
+* CORE v1.4.4 => version: 0.4
 
 ### Library
 1. lib_excel.php
@@ -12,8 +14,11 @@
 * ***time: 2013-08/19*** version: 0.1
 * ***time: 2013-09/24*** version: 0.2
 	* ***增加讀取excel函數***
-* ***time: 2013-09/24*** version: 0.3
-	* ***增加 支援 Libxl ***
+* ***time: 2013-12/04*** version: 0.3
+	* ***增加 支援 Libxl output ***
+* ***time: 2013-12/24*** version: 0.4
+	* ***增加 支援 Libxl load ***
+
 ### 用途
 1. 簡化建立excel csv 功能
 2. 整合ADODB 輸出直接使用
@@ -148,6 +153,8 @@ if( preg_match("/\.(xls|xlsx)$/i" , strtolower( $_FILES['upload_file']['name'] )
 	    die('Error copy file: ' . $e->getMessage());
 	}
 
+
+	//設定 title
 	$importCells = array(
 	'Sch_Code',	
 	'GClass',	
@@ -156,7 +163,14 @@ if( preg_match("/\.(xls|xlsx)$/i" , strtolower( $_FILES['upload_file']['name'] )
 	'REM',	
 	'Acnt_Name'
 	);
-			$data = $this->mCore->mExcel->load($uploadpath , $importCells);
+
+	//使用PHPExcel
+	$data = $this->mCore->mExcel->load($uploadpath , $importCells);
+
+	//使用libxl
+	$this->mCore->mExcel->libxlLoad($uploadpath , $importCells);
+
+
 }
 ```
 
