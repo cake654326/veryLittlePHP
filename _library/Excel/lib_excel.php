@@ -196,6 +196,55 @@ class lib_excel extends cx_lib {
 		return ;
 	}
 
+	public function saveCSV(	 $_path 
+								,$_fileName  
+								,$_aData
+								,$_aRule = false
+								,$sep = ','
+								,$sepreplace = '，'
+								,$addtitles=true
+								,$quote = '"'
+								,$escquote = '"'
+								,$replaceNewLine = ' ')
+	{
+		if($_aRule == false){
+			$_aRule = $this->aRule[$this->_nowGroupKey];
+		}
+
+
+		//處理 IE 問題
+		if ( 
+			strpos( strtoupper( $_SERVER['HTTP_USER_AGENT'] ) , "MSIE" ) !== FALSE
+			or 
+			strpos( strtoupper($_SERVER['HTTP_USER_AGENT']) , "TRIDENT" ) !== FALSE
+			)
+		{
+
+			$_fileName = iconv('utf-8', 'big5', $_fileName);
+		}
+
+		$_str = $this->_outputCsv($_aRule,$_aData,$sep,$sepreplace,$outstream,$addtitles,$quote,$escquote,$replaceNewLine);
+		
+		return $this->write_file( $_path , $_str );
+
+
+	}
+
+	private function write_file($path, $data, $mode = FOPEN_WRITE_CREATE_DESTRUCTIVE)
+	{
+		if ( ! $fp = @fopen($path, $mode))
+		{
+			return FALSE;
+		}
+
+		flock($fp, LOCK_EX);
+		fwrite($fp, $data);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+
+		return TRUE;
+	}
+
 	private function _outputCsv($_aRule,$rs,$sep,$sepreplace,$fp=false,$addtitles=true,$quote = '"',$escquote = '"',$replaceNewLine = ' '){
 		if (!$rs) return '';
 		$NEWLINE = "\r\n";
@@ -402,5 +451,9 @@ class lib_excel extends cx_lib {
 
 	}
 
+	//--- save JSON
+	
+
 
 }
+

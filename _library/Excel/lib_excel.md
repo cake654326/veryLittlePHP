@@ -96,6 +96,8 @@
 	//to excel
 	$this->mCore->mExcel->outputExcel($_file_name ,$_reportData);
 
+	$this->mCore->mExcel->outputLibxl($_file_name ,$_reportData);
+
 ``` 
 
 

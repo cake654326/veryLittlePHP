@@ -9,18 +9,17 @@ class cxAdodb{
 		$DB['config'] = $_config;
 
 		switch( $_config['Drive'] ){
-			case "access":
-				//尚未實做
-				// $DB['conn'] = self::linXxxxx($_config);
-			break;
+
 			case "adoMssql":
 			case "ado_mssql":
 				$DB['conn'] = self::linkAdoMssql($_config);
 			break;
+
 			case "pdoMssql":
 			case "pdo_mssql":
 				$DB['conn'] = self::linkPdoMysql($_config);
 			break;
+
 			case "pdoOdbcMssql":
 			case "pdo_odbc_mssql":
 				$DB['conn'] = self::linkPdoOdbcMssql($_config);
@@ -28,9 +27,14 @@ class cxAdodb{
 			// case "mssql":
 			// 	// $DB['conn'] = self::linXxxxx($_config);
 			// break;
+
 			case "mysql":
+				// echo "mysql";exit();
+				// print_cx($_config);
 				$DB['conn'] = self::linkMysql($_config);
+				// print_cx($DB);
 			break;
+
 			case "pdoMysql":
 			case "pdo_mysql":
 			// print_cx($_config);exit();
@@ -40,25 +44,31 @@ class cxAdodb{
 				//尚未實做
 			// break;
 
+			case "access":
+				// echo "cake";
+				// echo "access";exit();
+				$DB['conn'] = self::linkAccess( $_config );
+				// echo "link";
+			break;
+
 			default:
 				$DB['conn'] = false;
 			break;
 		}
 
-		// print_cx($DB['conn']);
-		$DB['conn']->SetFetchMode( ADODB_FETCH_ASSOC );
+
+		if( @method_exists( $DB['conn'] , 'SetFetchMode' ) ){
+				$DB['conn']->SetFetchMode( ADODB_FETCH_ASSOC );
+		}else{
+				echo "[DB][ERROR]: Link Drive「" . $_config['Drive']  . "」 BAD ";   
+				exit();
+		}
+		    
 		return $DB['conn'];
 
 	}
 
-/*
-  [Drive] => ado_mssql
-    [Path] => 
-    [Host] => 172.16.44.209
-    [User] => sa
-    [Password] => seat
-    [Database] => CAP_JHSV2
-*/
+
 
 	// ==== 實做 ====
 	public static function linkMysql($_config){
@@ -117,13 +127,48 @@ class cxAdodb{
 	}
 
 	public static function linkAccess($_config){
-		// --- 未實做
+		$access = realpath( $_config['Path'] ); 
+		// $access = $_config['Path']; 
 /*
-$dsn 	= "Driver={Microsoft Access Driver (*.mdb)};Dbq=".$DBPath.";Uid=;Pwd=;";
-		$conn	= &ADONewConnection("access");
-		$conn->charPage=CP_UTF8;
-		$conn->PConnect($dsn);
+$access = \'test.mdb\'; 
+$myDSN = \'PROVIDER=Microsoft.Jet.OLEDB.4.0;\'.\'DATA SOURCE=\'. $access . \';\';.\'USER ID=;PASSWORD=;\'; 
+
+if (@$db->PConnect($myDSN, \"\", \"\", \"\")) { 
 */
+	/*
+	$dsn = 'PROVIDER=Microsoft.Jet.OLEDB.4.0;'.'DATA SOURCE='. $access . ';'.'USER ID=;PASSWORD=;'; 
+	$db = &ADONewConnection("ado_access"); 
+
+	$db->PConnect($dsn);
+*/
+
+// $connection = odbc_connect( 'Driver={Microsoft Access Driver (*.mdb)};Dbq="'. $access .'"' , '', '' );
+
+
+/*ok
+$DBPath_acc= realpath( $xPath_acc );
+			$dsn_acc = "Driver={Microsoft Access Driver (*.mdb)};Dbq=".$DBPath_acc.";Uid=;Pwd=;";
+			$conn_acc = &ADONewConnection( 'access' );
+			$conn_acc->Connect( $dsn_acc );
+*/
+
+		$dsn = 
+	"Driver={Microsoft Access Driver (*.mdb)};Dbq=".$access.";Uid=".$_config['User'].";Pwd=".$_config['Password'].";";
+		// echo $dsn;
+		$db = null;
+		$db	= ADONewConnection("access");
+
+
+// $obj=odbc_connect($dsn,'',''); 
+
+
+		@$db->charPage=CP_UTF8;
+		$db->PConnect($dsn);
+		// echo $dsn;
+		// print_cx($db);exit();
+
+
+		return $db;
 	}
 
 	public static function linkSqlite($_config){
