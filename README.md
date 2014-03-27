@@ -5,7 +5,7 @@
 *  @author      Cake X
 *  @link        https://github.com/cake654326/veryLittlePHP
 *  @mail        c782172004@gmail.com
-*  @version     1.4.4
+*  @version     1.4.5
 
 ### Summary
 	This is a small framework to support the "ADODB",
