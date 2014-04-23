@@ -1008,6 +1008,8 @@
 	 */
 	function Execute($sql,$inputarr=false) 
 	{
+
+		// print_cx($inputarr);
 		if ($this->fnExecute) {
 			$fn = $this->fnExecute;
 			$ret = $fn($this,$sql,$inputarr);
@@ -1036,10 +1038,12 @@
 						// from Ron Baldwin <ron.baldwin#sourceprose.com>
 						// Only quote string types	
 						$typ = gettype($v);
-						if ($typ == 'string')
+						if ($typ == 'string'){
 							//New memory copy of input created here -mikefedyk
+							// $qqq = $this->qstr($v);
+							// echo "<br/>" . $qqq;
 							$sql .= $this->qstr($v);
-						else if ($typ == 'double')
+						}else if ($typ == 'double')
 							$sql .= str_replace(',','.',$v); // locales fix so 1.1 does not get converted to 1,1
 						else if ($typ == 'boolean')
 							$sql .= $v ? $this->true : $this->false;
@@ -1088,7 +1092,9 @@
 	
 	function _Execute($sql,$inputarr=false)
 	{
-
+		// print_($inputarr);
+// 		echo "cake:";
+// print_cx($sql);exit();
 		//---cx 
 if (defined('CXDEBUG'))
 	{
@@ -1107,7 +1113,9 @@ if (defined('CXDEBUG'))
 		ChromePhp::log("SQL", $sql);//round
 		}
 	}
+	// echo $sql;
 		$this->_cx_sql = $sql;
+
 		//----- end
 
 		if ($this->debug) {
@@ -2798,6 +2806,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 	 */
 	function qstr($s,$magic_quotes=false)
 	{	
+
 		if (!$magic_quotes) {
 		
 			if ($this->replaceQuote[0] == '\\'){
@@ -2810,7 +2819,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 		
 		// undo magic quotes for "
 		$s = str_replace('\\"','"',$s);
-		
+// echo "<br/>" . $s;
 		if ($this->replaceQuote == "\\'" || ini_get('magic_quotes_sybase'))  // ' already quoted, no need to change anything
 			return "'$s'";
 		else {// change \' to '' for sybase/mssql
@@ -4276,6 +4285,8 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 			default:
 				$class = $db; break;
 		}
+
+		// echo $db . "<br/>";//ado_mssql
 		
 		$file = ADODB_DIR."/drivers/adodb-".$db.".inc.php";
 		@include_once($file);

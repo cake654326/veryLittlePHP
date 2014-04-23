@@ -780,6 +780,7 @@ order by constraint_name, referenced_table_name, keyno";
 			$params = '';
 			$decl = '';
 			$i = 0;
+			
 			foreach($inputarr as $v) {
 				if ($decl) {
 					$decl .= ', ';
