@@ -17,7 +17,7 @@ class cxAdodb{
 
 			case "pdoMssql":
 			case "pdo_mssql":
-				$DB['conn'] = self::linkPdoMysql($_config);
+				$DB['conn'] = self::linkPdoMssql($_config);
 			break;
 
 			case "pdoOdbcMssql":
@@ -118,10 +118,16 @@ class cxAdodb{
 	}
 	
 	public static function linkPdoMysql($_config){
+	/*
+	$conn =& NewADConnection('pdo');
+         $conn->Connect('mysql:host=localhost',$user,$pwd,$mydb);
+         $conn->Connect('mysql:host=localhost;dbname=mydb',$user,$pwd);
+         $conn->Connect("mysql:host=localhost;dbname=mydb;username=$user;password=$pwd");
+	*/
 		$db = null;
 		$db =NewADOConnection('pdo');
 		//$dsn = 'sqlsrv:Server=172.16.44.209;Database=CAP_JHSV2'; 
-		$db->Connect('sqlsrv:Server='.$_config['Host'],$_config['User'],$_config['Password'], $_config['Database']);
+		$db->Connect('mysql:host='.$_config['Host'],$_config['User'],$_config['Password'], $_config['Database']);
 		// $this->mConn->ErrorMsg();
 		return $db;
 	}
